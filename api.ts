@@ -20,7 +20,7 @@ function getBounds(
 ): [start: Date, end: Date] {
   if (!start) {
     const e = end ?? new Date();
-    return [subDays(e, 7), e];
+    return [subDays(e, 16), e];
   }
 
   return [start, end ?? addDays(start, 7)];
