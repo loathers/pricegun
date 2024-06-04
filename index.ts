@@ -1,4 +1,3 @@
-import { subDays } from "date-fns";
 import { App } from "@tinyhttp/app";
 import { query } from "./api.js";
 import { redis } from "./redis.js";

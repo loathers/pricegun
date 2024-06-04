@@ -12,7 +12,7 @@ where
 
 - $P_{\mathrm{TWAP}}$ is the Time Weighted Average Price
 - $P_j$ is the price of the item at a given transaction
-- $T_j$ is the change in time since previous transaction
+- $T_j$ is the time since the transaction epoch
 - $V_j$ is the volume of a given transaction
 - $E$ is a factor for dampening the impact of sudden high volume transactions
 - $j$ is the individual transaction
