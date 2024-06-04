@@ -1,6 +1,8 @@
 import { addDays, format, subDays } from "date-fns";
 
-const BASIC_TOKEN = Buffer.from(`${process.env["USERNAME"]}:${process.env["PASSWORD"]}`).toString("base64");
+const BASIC_TOKEN = Buffer.from(
+  `${process.env["USERNAME"]}:${process.env["PASSWORD"]}`,
+).toString("base64");
 
 export type SaleData = {
   source: "mall" | "flea";
@@ -35,7 +37,7 @@ export function parseLine(line: string): SaleData {
     quantity,
     unitPrice: Number(parts[5]) / quantity,
     date: new Date(parts[6]),
-  }; 
+  };
 }
 
 export async function query(

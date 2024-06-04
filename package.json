@@ -13,5 +13,8 @@
     "@tinyhttp/app": "^2.2.3",
     "date-fns": "^3.6.0",
     "redis": "^4.6.14"
+  },
+  "scripts": {
+    "format": "prettier --write ."
   }
 }
