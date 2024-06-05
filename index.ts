@@ -1,4 +1,6 @@
 import { App } from "@tinyhttp/app";
+import { cors } from "@tinyhttp/cors";
+
 import { query } from "./api.js";
 import { redis } from "./redis.js";
 import { deriveValue } from "./value.js";
@@ -8,6 +10,7 @@ const TTL = 60 * 60 * 24;
 const app = new App();
 
 app
+  .use(cors())
   .get("/api/:itemid", async (req, res) => {
     const itemId = Number(req.params["itemid"]);
 

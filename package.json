@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tinyhttp/app": "^2.2.3",
+    "@tinyhttp/cors": "^2.0.0",
     "date-fns": "^3.6.0",
     "redis": "^4.6.14"
   },
