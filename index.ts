@@ -39,7 +39,8 @@ app
         );
       }
 
-      results.push(await redis.get(cacheKey));
+      const result = await redis.get(cacheKey) as string;
+      results.push(JSON.parse(result));
     }
 
     return res.send(itemIds.length === 1 ? results[0] : results);
