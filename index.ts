@@ -39,7 +39,7 @@ app
         );
       }
 
-      const result = await redis.get(cacheKey) as string;
+      const result = (await redis.get(cacheKey)) as string;
       results.push(JSON.parse(result));
     }
 
