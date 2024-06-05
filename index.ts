@@ -12,29 +12,37 @@ const app = new App();
 app
   .use(cors())
   .get("/api/:itemid", async (req, res) => {
-    const itemId = Number(req.params["itemid"]);
+    const itemIds = req.params["itemid"]
+      .split(",")
+      .map(Number)
+      .filter(Number.isInteger);
 
-    const cacheKey = `value:${itemId}`;
+    const results = [];
 
-    if (!(await redis.exists(cacheKey))) {
-      const date = new Date();
+    for (const itemId of itemIds) {
+      const cacheKey = `value:${itemId}`;
 
-      const sales = await query(itemId);
+      if (!(await redis.exists(cacheKey))) {
+        const date = new Date();
 
-      const value = deriveValue(sales);
-      const volume = sales.reduce((acc, s) => acc + s.quantity, 0);
+        const sales = await query(itemId);
 
-      await redis.set(
-        cacheKey,
-        JSON.stringify({ value, volume, date, itemId }),
-        {
-          EX: TTL,
-        },
-      );
+        const value = deriveValue(sales);
+        const volume = sales.reduce((acc, s) => acc + s.quantity, 0);
+
+        await redis.set(
+          cacheKey,
+          JSON.stringify({ value, volume, date, itemId }),
+          {
+            EX: TTL,
+          },
+        );
+      }
+
+      results.push(await redis.get(cacheKey));
     }
 
-    const result = await redis.get(cacheKey);
-    return res.json(result);
+    return res.send(itemIds.length === 1 ? results[0] : results);
   })
   .get("/", async (_, res) => {
     return res.send("🏷️🔫");
