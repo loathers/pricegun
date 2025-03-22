@@ -11,7 +11,7 @@ export function deriveValue(sales: SaleData[]) {
   const [numerator, denominator] = sales.reduce(
     ([n, d], s) => {
       const timeValue = differenceInSeconds(s.date, epoch);
-      const volumeValue = s.quantity ^ VOLUME_EXPONENT;
+      const volumeValue = s.quantity ** VOLUME_EXPONENT;
       return [
         n + s.unitPrice * timeValue * volumeValue,
         d + timeValue * volumeValue,
