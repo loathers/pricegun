@@ -6,14 +6,14 @@
   "license": "MIT",
   "devDependencies": {
     "@types/bun": "latest",
-    "prettier": "^3.3.0",
-    "typescript": "^5.5.0-beta"
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@tinyhttp/app": "^2.2.3",
-    "@tinyhttp/cors": "^2.0.0",
-    "date-fns": "^3.6.0",
-    "redis": "^4.6.14"
+    "@tinyhttp/app": "^2.5.2",
+    "@tinyhttp/cors": "^2.0.1",
+    "date-fns": "^4.1.0",
+    "redis": "^4.7.1"
   },
   "scripts": {
     "format": "prettier --write ."
