@@ -41,7 +41,7 @@ export function parseLine(line: string): SaleData {
 }
 
 export async function query(
-  items: number | number[],
+  items: number | number[] | null,
   start?: Date,
   end?: Date,
 ): Promise<SaleData[]> {
@@ -50,7 +50,11 @@ export async function query(
   const body = new URLSearchParams({
     startstamp: format(startDate, "yyyyMMddHHmmss"),
     endstamp: format(endDate, "yyyyMMddHHmmss"),
-    items: Array.isArray(items) ? items.join(",") : items.toString(),
+    items: Array.isArray(items)
+      ? items.join(",")
+      : items === null
+        ? ""
+        : items.toString(),
     source: "0",
   });
 
