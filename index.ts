@@ -93,7 +93,16 @@ app
       results.push(JSON.parse(result));
     }
 
-    return res.send(itemIds.length === 1 ? results[0] : results);
+    if (itemIds.length === 1) {
+      const result = results[0];
+      if (!result)
+        return res
+          .status(404)
+          .send("Item has not appeared in mall searches in the last 14 days");
+      return res.send(result);
+    }
+
+    return res.send(results);
   })
   .get("/", async (_, res) => {
     return res.send("🏷️🔫");
