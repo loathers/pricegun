@@ -98,7 +98,7 @@ app
       if (!result)
         return res
           .status(404)
-          .send("Item has not appeared in mall searches in the last 14 days");
+          .send({ error: "Item has not appeared in mall searches in the last 14 days" });
       return res.send(result);
     }
 
