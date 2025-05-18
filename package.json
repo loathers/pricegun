@@ -13,7 +13,7 @@
     "@tinyhttp/app": "^2.5.2",
     "@tinyhttp/cors": "^2.0.1",
     "date-fns": "^4.1.0",
-    "redis": "^4.7.1"
+    "redis": "^5.0.1"
   },
   "scripts": {
     "format": "prettier --write ."
