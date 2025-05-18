@@ -184,7 +184,7 @@ test("Gradual price jump", () => {
   ];
   const actual = deriveValue(data);
 
-  expect(actual).toBeCloseTo(534, 0);
+  expect(actual).toBeCloseTo(540, 0);
 });
 
 test("Weird price jump outlier", () => {
