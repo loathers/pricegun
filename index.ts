@@ -51,8 +51,9 @@ app
     const keys = await Array.fromAsync(
       redis.scanIterator({ MATCH: "value:*" }),
     );
+    
     return res.send(
-      (await Promise.all(keys.map((k) => redis.get(k))))
+      (await redis.mGet(keys))
         .filter((v) => v !== null)
         .map((v) => JSON.parse(v)),
     );
