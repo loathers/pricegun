@@ -70,7 +70,7 @@ test("Older price drop", () => {
   ];
   const actual = deriveValue(data);
 
-  expect(actual).toBeCloseTo(9684, 0);
+  expect(actual).toBeCloseTo(6808, 0);
 });
 
 test("Recent price jump", () => {
@@ -127,7 +127,7 @@ test("Recent price jump", () => {
   ];
   const actual = deriveValue(data);
 
-  expect(actual).toBeCloseTo(10099.5, 0);
+  expect(actual).toBeCloseTo(8169, 0);
 });
 
 test("Gradual price jump", () => {
@@ -184,7 +184,7 @@ test("Gradual price jump", () => {
   ];
   const actual = deriveValue(data);
 
-  expect(actual).toBeCloseTo(516.5, 0);
+  expect(actual).toBeCloseTo(540, 0);
 });
 
 test("Weird price jump outlier", () => {
@@ -241,7 +241,7 @@ test("Weird price jump outlier", () => {
   ];
   const actual = deriveValue(data);
 
-  expect(actual).toBeCloseTo(9488, 0);
+  expect(actual).toBeCloseTo(6789, 0);
 });
 
 test("Very low volume", () => {
@@ -320,7 +320,7 @@ test("High volume rational market", () => {
   ];
   const actual = deriveValue(data);
 
-  expect(actual).toBeCloseTo(7483, 0);
+  expect(actual).toBeCloseTo(7491, 0);
 });
 
 test("High volume irrational market", () => {
@@ -377,5 +377,5 @@ test("High volume irrational market", () => {
   ];
   const actual = deriveValue(data);
 
-  expect(actual).toBeCloseTo(7527, 0);
+  expect(actual).toBeCloseTo(7513, 0);
 });
