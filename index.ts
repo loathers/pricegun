@@ -48,10 +48,10 @@ app
         .exec();
     }
 
-    const keys = await Array.fromAsync(
-      redis.scanIterator({ MATCH: "value:*" }),
-    );
-    
+    const keys = (
+      await Array.fromAsync(redis.scanIterator({ MATCH: "value:*" }))
+    ).flat();
+
     return res.send(
       (await redis.mGet(keys))
         .filter((v) => v !== null)
@@ -99,7 +99,9 @@ app
       if (!result)
         return res
           .status(404)
-          .send({ error: "Item has not appeared in mall searches in the last 14 days" });
+          .send({
+            error: "Item has not appeared in mall searches in the last 14 days",
+          });
       return res.send(result);
     }
 
