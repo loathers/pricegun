@@ -22,11 +22,11 @@ where
 To install dependencies:
 
 ```bash
-bun install
+yarn
 ```
 
 To run:
 
 ```bash
-bun run index.ts
+yarn start
 ```
