@@ -1,4 +1,4 @@
-import { addDays, format, subDays } from "date-fns";
+import { format, subDays } from "date-fns";
 
 const BASIC_TOKEN = Buffer.from(
   `${process.env["USERNAME"]}:${process.env["PASSWORD"]}`,
@@ -18,12 +18,12 @@ function getBounds(
   start: Date | undefined,
   end: Date | undefined,
 ): [start: Date, end: Date] {
+  const e = end ?? new Date();
   if (!start) {
-    const e = end ?? new Date();
     return [subDays(e, 16), e];
   }
 
-  return [start, end ?? addDays(start, 7)];
+  return [start, e];
 }
 
 export function parseLine(line: string): SaleResponse {

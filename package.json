@@ -6,7 +6,9 @@
     "@prisma/client": "^6.18.0",
     "@tinyhttp/app": "^2.5.2",
     "@tinyhttp/cors": "^2.0.1",
+    "data-of-loathing": "^2.6.0",
     "date-fns": "^4.1.0",
+    "liquidjs": "^10.23.0",
     "tsx": "^4.20.6"
   },
   "devDependencies": {
@@ -19,8 +21,8 @@
   "scripts": {
     "test": "vitest",
     "etl": "node --env-file-if-exists .env --import tsx ./etl.ts",
-    "start": "node --import tsx ./index.ts",
-    "dev": "node --watch --import tsx ./index.ts",
+    "start": "node --env-file-if-exists .env --import tsx ./index.ts",
+    "dev": "node --env-file-if-exists .env --watch --import tsx ./index.ts",
     "format": "prettier --write ."
   },
   "engines": {

@@ -917,6 +917,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"commander@npm:^10.0.0":
+  version: 10.0.1
+  resolution: "commander@npm:10.0.1"
+  checksum: 10c0/53f33d8927758a911094adadda4b2cbac111a5b377d8706700587650fd8f45b0bbe336de4b5c3fe47fd61f420a3d9bd452b6e0e6e5600a7e74d7bf0174f6efe3
+  languageName: node
+  linkType: hard
+
 "confbox@npm:^0.2.2":
   version: 0.2.2
   resolution: "confbox@npm:0.2.2"
@@ -939,6 +946,13 @@ __metadata:
     shebang-command: "npm:^2.0.0"
     which: "npm:^2.0.1"
   checksum: 10c0/053ea8b2135caff68a9e81470e845613e374e7309a47731e81639de3eaeb90c3d01af0e0b44d2ab9d50b43467223b88567dfeb3262db942dc063b9976718ffc1
+  languageName: node
+  linkType: hard
+
+"data-of-loathing@npm:^2.6.0":
+  version: 2.6.0
+  resolution: "data-of-loathing@npm:2.6.0"
+  checksum: 10c0/de440bda79eb71a973c06ab290305fc584cd09b01716f5cd24a218ea1ab316e0edfd990a843c1181a5ef7698e91193901ce4212abb758c487d10015c235f8782
   languageName: node
   linkType: hard
 
@@ -1397,6 +1411,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"liquidjs@npm:^10.23.0":
+  version: 10.23.0
+  resolution: "liquidjs@npm:10.23.0"
+  dependencies:
+    commander: "npm:^10.0.0"
+  bin:
+    liquid: bin/liquid.js
+    liquidjs: bin/liquid.js
+  checksum: 10c0/4b11de851468f8a968ffbef8008255b292231be6a0bca957afc9ae6cc2e5430e41fa912714837a9734bc2d944ff09055c05fe97cbf4409614595dd170b3b7155
+  languageName: node
+  linkType: hard
+
 "lru-cache@npm:^10.0.1, lru-cache@npm:^10.2.0":
   version: 10.4.3
   resolution: "lru-cache@npm:10.4.3"
@@ -1714,7 +1740,9 @@ __metadata:
     "@tinyhttp/app": "npm:^2.5.2"
     "@tinyhttp/cors": "npm:^2.0.1"
     "@types/node": "npm:^24.9.1"
+    data-of-loathing: "npm:^2.6.0"
     date-fns: "npm:^4.1.0"
+    liquidjs: "npm:^10.23.0"
     prettier: "npm:^3.6.2"
     prisma: "npm:^6.18.0"
     tsx: "npm:^4.20.6"
