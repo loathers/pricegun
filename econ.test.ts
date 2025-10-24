@@ -1,5 +1,5 @@
-import { expect, test } from "bun:test";
-import { parseLine } from "./api";
+import { expect, test } from "vitest";
+import { parseLine } from "./econ";
 
 test("Parse simple mall line", () => {
   const line = "m,1197090,1345884,641,1,100,2024-05-23 12:08:40";

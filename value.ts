@@ -1,9 +1,9 @@
 import { differenceInSeconds, subDays } from "date-fns";
-import type { SaleData } from "./api.js";
+import type { Sale } from "./generated/prisma/client.js";
 
 const VOLUME_EXPONENT = 0.5;
 
-export function deriveValue(sales: SaleData[]) {
+export function deriveValue(sales: Sale[]) {
   if (sales.length === 0) return 0;
 
   const epoch = subDays(new Date(), 20);

@@ -1,3 +1,13 @@
 node_modules/
 .vscode
 .env
+/generated/prisma
+
+.yarn-error.log
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
