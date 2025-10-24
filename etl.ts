@@ -1,4 +1,4 @@
-import { subDays } from "date-fns";
+import { format, subDays } from "date-fns";
 import { prisma } from "./db";
 import { query } from "./econ";
 import { deriveValue } from "./value";
@@ -9,11 +9,22 @@ async function main() {
 }
 
 async function ingestSales() {
-  const sales = await query(null);
+  const latest = await prisma.sale.findFirst({
+    orderBy: { date: "desc" },
+  });
+
+  const sales = await query(null, latest?.date);
+
+  console.log(
+    `Found ${sales.length} sales since ${format(latest?.date ?? new Date(0), "yyyy-MM-dd HH:mm:ss")}`,
+  );
 
   await prisma.sale.createMany({
     data: sales.map((s) => ({
-      ...s,
+      date: s.date,
+      unitPrice: s.unitPrice,
+      quantity: s.quantity,
+      source: s.source,
       itemId: s.item,
       buyerId: s.buyer,
       sellerId: s.seller,
@@ -26,6 +37,7 @@ async function ingestSales() {
 
 async function recalculateValues(itemIds: number[]) {
   for (const itemId of itemIds) {
+    console.log(`(Re)calculating value for item ${itemId}`);
     const sales = await prisma.sale.findMany({
       where: { itemId },
     });
