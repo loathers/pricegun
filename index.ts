@@ -37,4 +37,6 @@ app
   .get("/", async (_, res) => {
     return res.send("🏷️🔫");
   })
-  .listen(3000);
+  .listen(3000, () => {
+    console.log("Server running on port 3000");
+  });

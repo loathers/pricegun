@@ -15,6 +15,9 @@
     "vitest": "^4.0.3"
   },
   "scripts": {
+    "etl": "node --env-file .env --import tsx ./etl.ts",
+    "start": "node --env-file .env --import tsx ./index.ts",
+    "dev": "node --watch --env-file .env --import tsx ./index.ts",
     "format": "prettier --write ."
   }
 }
