@@ -1,11 +1,13 @@
 {
   "name": "pricegun",
+  "type": "module",
   "packageManager": "yarn@4.10.3",
   "dependencies": {
     "@prisma/client": "^6.18.0",
     "@tinyhttp/app": "^2.5.2",
     "@tinyhttp/cors": "^2.0.1",
-    "date-fns": "^4.1.0"
+    "date-fns": "^4.1.0",
+    "tsx": "^4.20.6"
   },
   "devDependencies": {
     "@types/node": "^24.9.1",
