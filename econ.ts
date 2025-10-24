@@ -4,7 +4,7 @@ const BASIC_TOKEN = Buffer.from(
   `${process.env["USERNAME"]}:${process.env["PASSWORD"]}`,
 ).toString("base64");
 
-export type SaleData = {
+export type SaleResponse = {
   source: "mall" | "flea";
   buyer: number;
   seller: number;
@@ -26,7 +26,7 @@ function getBounds(
   return [start, end ?? addDays(start, 7)];
 }
 
-export function parseLine(line: string): SaleData {
+export function parseLine(line: string): SaleResponse {
   const parts = line.split(",");
   const quantity = Number(parts[4]);
   return {
@@ -44,7 +44,7 @@ export async function query(
   items: number | number[] | null,
   start?: Date,
   end?: Date,
-): Promise<SaleData[]> {
+): Promise<SaleResponse[]> {
   const [startDate, endDate] = getBounds(start, end);
 
   const body = new URLSearchParams({
