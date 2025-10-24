@@ -22,5 +22,8 @@
     "start": "node --import tsx ./index.ts",
     "dev": "node --watch --import tsx ./index.ts",
     "format": "prettier --write ."
+  },
+  "engines": {
+    "node": "24"
   }
 }
