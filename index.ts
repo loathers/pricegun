@@ -1,7 +1,7 @@
 import { App } from "@tinyhttp/app";
 import { cors } from "@tinyhttp/cors";
 
-import { prisma } from "./db.js";
+import { getSpendLeaderboard, getVolumeLeaderboard, prisma } from "./db.js";
 import { template } from "./template.js";
 import { findItemNames } from "./data.js";
 
@@ -39,50 +39,27 @@ app
   .get("/", async (_, res) => {
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-    const volume = await prisma.sale.groupBy({
-      by: ["itemId"],
-      where: {
-        date: { gte: since },
-      },
-      _sum: { quantity: true },
-      orderBy: {
-        _sum: { quantity: "desc" },
-      },
-      take: 10,
-    });
-
-    const spend = await prisma.$queryRaw<
-      { itemId: number; quantity: number; spend: number }[]
-    >`
-      SELECT "itemId",
-       SUM("quantity") as "quantity",
-       SUM("quantity" * "unitPrice") AS "spend"
-      FROM "Sale"
-      WHERE "date" >= ${since}
-      GROUP BY "itemId"
-      ORDER BY "spend" DESC
-      LIMIT 10
-    `;
-
     const page = await template.parseAndRender(
       `
       <h1>Pricegun 🏷️🔫</h1>
+      <p>Now tracking {{ total | format_number }} transactions!</p>
       <h2>Top Spend (last 24h)</h2>
       <ol>
-      {% for item in spend %}
-      <li>{{ item.name }}: {{ item.quantity | format_number }} for a total of {{ item.spend | format_number }} meat</li>
-      {% endfor %}
+        {% for item in spend %}
+        <li>{{ item.name }}: {{ item.quantity | format_number }} for a total of {{ item.spend | format_number }} meat</li>
+        {% endfor %}
       </ol>
       <h2>Top Volume (last 24h)</h2>
       <ol>
-      {% for item in volume %}
-      <li>{{ item.name }}: {{ item._sum.quantity | format_number }}</li>
-      {% endfor %}
+        {% for item in volume %}
+        <li>{{ item.name }}: {{ item._sum.quantity | format_number }}</li>
+        {% endfor %}
       </ol>
     `,
       {
-        volume: await findItemNames(volume),
-        spend: await findItemNames(spend),
+        volume: await findItemNames(await getVolumeLeaderboard(since)),
+        spend: await findItemNames(await getSpendLeaderboard(since)),
+        total: await prisma.sale.count({}),
       },
     );
     return res.send(page);
