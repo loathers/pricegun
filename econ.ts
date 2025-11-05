@@ -1,4 +1,5 @@
 import { format, subDays } from "date-fns";
+import { Prisma } from "./generated/prisma/client";
 
 const BASIC_TOKEN = Buffer.from(
   `${process.env["USERNAME"]}:${process.env["PASSWORD"]}`,
@@ -10,7 +11,7 @@ export type SaleResponse = {
   seller: number;
   item: number;
   quantity: number;
-  unitPrice: number;
+  unitPrice: Prisma.Decimal;
   date: Date;
 };
 
@@ -35,7 +36,7 @@ export function parseLine(line: string): SaleResponse {
     seller: Number(parts[2]),
     item: Number(parts[3]),
     quantity,
-    unitPrice: Number(parts[5]) / quantity,
+    unitPrice: Prisma.Decimal(parts[5]).div(quantity),
     date: new Date(parts[6]),
   };
 }
