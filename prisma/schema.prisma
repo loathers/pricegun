@@ -25,14 +25,14 @@ model Sale {
   sellerId  Int
   itemId    Int
   quantity  Int
-  unitPrice Int
+  unitPrice Decimal
   date      DateTime
 
   @@id([source, buyerId, sellerId, itemId, date])
 }
 
 model Price {
-  value  Int
+  value  Decimal
   volume Int
   date   DateTime
   itemId Int      @id
