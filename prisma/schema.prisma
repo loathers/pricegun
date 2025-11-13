@@ -5,8 +5,9 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider        = "prisma-client"
+  previewFeatures = ["typedSql"]
+  output          = "../generated/prisma"
 }
 
 datasource db {
@@ -27,13 +28,17 @@ model Sale {
   quantity  Int
   unitPrice Decimal
   date      DateTime
+  item      Item       @relation(fields: [itemId], references: [itemId])
 
   @@id([source, buyerId, sellerId, itemId, date])
 }
 
-model Price {
+model Item {
   value  Decimal
   volume Int
   date   DateTime
   itemId Int      @id
+  name   String?
+  image  String   @default("nopic.gif")
+  sales  Sale[]
 }

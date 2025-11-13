@@ -1,13 +1,8 @@
-node_modules/
-.vscode
+.DS_Store
 .env
-/generated/prisma
+/node_modules/
+.vscode/
 
-.yarn-error.log
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
+# React Router
+/.react-router/
+/build/
