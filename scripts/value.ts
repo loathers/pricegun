@@ -1,5 +1,5 @@
 import { differenceInSeconds, subDays } from "date-fns";
-import { Prisma, type Sale } from "../generated/prisma/client.js";
+import { Prisma, type Sale } from "../app/generated/prisma/client.js";
 
 const VOLUME_EXPONENT = 0.5;
 

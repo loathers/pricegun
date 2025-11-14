@@ -1,6 +1,6 @@
 import { test, expect, beforeAll, vi } from "vitest";
 import { deriveValue } from "./value";
-import { Prisma, type Sale } from "../generated/prisma/client";
+import { Prisma, type Sale } from "../app/generated/prisma/client";
 
 beforeAll(() => {
   vi.setSystemTime(new Date("2024-06-01T00:00:00.000Z"));

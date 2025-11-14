@@ -1,7 +1,7 @@
 import { data } from "react-router";
-import { prisma } from "../db.server.js";
+import { prisma } from "~/db.server.js";
 import type { Route } from "./+types/api.$itemid.js";
-import { getSalesHistory } from "generated/prisma/sql.js";
+import { getSalesHistory } from "~/generated/prisma/sql/getSalesHistory.js";
 
 export async function loader({ params }: Route.LoaderArgs) {
   const itemIds = params["itemid"]!.split(",")

@@ -1,8 +1,6 @@
-import {
-  getSpendLeaderboard,
-  getVolumeLeaderboard,
-} from "generated/prisma/sql.js";
-import { PrismaClient } from "../generated/prisma/client.js";
+import { getSpendLeaderboard } from "~/generated/prisma/sql/getSpendLeaderboard.js";
+import { getVolumeLeaderboard } from "~/generated/prisma/sql/getVolumeLeaderboard.js";
+import { PrismaClient } from "~/generated/prisma/client.js";
 
 export const prisma = new PrismaClient();
 

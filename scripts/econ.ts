@@ -1,5 +1,5 @@
 import { format, subDays } from "date-fns";
-import { Prisma } from "../generated/prisma/client";
+import { Prisma } from "../app/generated/prisma/client";
 
 const BASIC_TOKEN = Buffer.from(
   `${process.env["USERNAME"]}:${process.env["PASSWORD"]}`,
