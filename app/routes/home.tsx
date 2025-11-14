@@ -11,8 +11,11 @@ import { ItemSelect, type Item } from "~/components/ItemSelect";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Pricegun 🏷️🔫" },
+    {
+      name: "description",
+      content: "Better pricing and mall tracking for the Kingdom of Loathing",
+    },
   ];
 }
 
