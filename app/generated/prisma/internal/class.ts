@@ -23,7 +23,7 @@ const config: runtime.GetPrismaClientConfig = {
       "value": "prisma-client"
     },
     "output": {
-      "value": "/Users/gausie/Projects/pricegun/generated/prisma",
+      "value": "/Users/gausie/Projects/pricegun/app/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -36,13 +36,11 @@ const config: runtime.GetPrismaClientConfig = {
         "native": true
       }
     ],
-    "previewFeatures": [
-      "typedSql"
-    ],
+    "previewFeatures": [],
     "sourceFilePath": "/Users/gausie/Projects/pricegun/prisma/schema.prisma",
     "isCustomOutput": true
   },
-  "relativePath": "../../prisma",
+  "relativePath": "../../../prisma",
   "clientVersion": "6.19.0",
   "engineVersion": "2ba551f319ab1df4bc874a89965d8b3641056773",
   "datasourceNames": [
@@ -58,8 +56,8 @@ const config: runtime.GetPrismaClientConfig = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider        = \"prisma-client\"\n  previewFeatures = [\"typedSql\"]\n  output          = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum SaleSource {\n  mall\n  flea\n}\n\nmodel Sale {\n  source    SaleSource\n  buyerId   Int\n  sellerId  Int\n  itemId    Int\n  quantity  Int\n  unitPrice Decimal\n  date      DateTime\n  item      Item       @relation(fields: [itemId], references: [itemId])\n\n  @@id([source, buyerId, sellerId, itemId, date])\n}\n\nmodel Item {\n  value  Decimal\n  volume Int\n  date   DateTime\n  itemId Int      @id\n  name   String?\n  image  String   @default(\"nopic.gif\")\n  sales  Sale[]\n}\n",
-  "inlineSchemaHash": "513c240c9bbd0fd2e4f35bef51e757ee487c56d4ccba2fc85df0824d10dd9ffb",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../app/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum SaleSource {\n  mall\n  flea\n}\n\nmodel Sale {\n  source    SaleSource\n  buyerId   Int\n  sellerId  Int\n  itemId    Int\n  quantity  Int\n  unitPrice Decimal\n  date      DateTime\n  item      Item       @relation(fields: [itemId], references: [itemId])\n\n  @@id([source, buyerId, sellerId, itemId, date])\n}\n\nmodel Item {\n  value  Decimal\n  volume Int\n  date   DateTime\n  itemId Int      @id\n  name   String?\n  image  String   @default(\"nopic.gif\")\n  sales  Sale[]\n}\n",
+  "inlineSchemaHash": "e9ad9e2aeb367e7d464f4dd3d0834ceb46f593a0266025c53856a5d5fa157308",
   "copyEngine": true,
   "runtimeDataModel": {
     "models": {},
@@ -181,16 +179,6 @@ export interface PrismaClient<
    */
   $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<T>;
 
-  /**
-   * Executes a typed SQL query and returns a typed result
-   * @example
-   * ```
-   * import { myQuery } from '@prisma/client/sql'
-   * 
-   * const result = await prisma.$queryRawTyped(myQuery())
-   * ```
-   */
-  $queryRawTyped<T>(typedSql: runtime.TypedSql<unknown[], T>): Prisma.PrismaPromise<T[]>
 
   /**
    * Allows the running of a sequence of read/write operations that are guaranteed to either succeed or fail as a whole.

@@ -1,6 +1,6 @@
 import { useLoaderData } from "react-router";
 
-import { mostSpend, mostVolume, prisma } from "~/db.server";
+import { getSpendLeaderboard, getVolumeLeaderboard, prisma } from "~/db.server";
 import type { Route } from "./+types/home";
 import { Chart } from "~/components/Chart";
 import { numberFormatter } from "~/utils";
@@ -19,8 +19,8 @@ export function meta({}: Route.MetaArgs) {
 export async function loader() {
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-  const volume = await mostVolume(since);
-  const spend = await mostSpend(since);
+  const volume = await getVolumeLeaderboard(since);
+  const spend = await getSpendLeaderboard(since);
   const total = await prisma.sale.count({});
   const items = await prisma.item.findMany({
     select: { itemId: true, name: true },
