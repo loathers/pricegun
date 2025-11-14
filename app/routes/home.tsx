@@ -31,9 +31,7 @@ export async function loader() {
 
 export default function Home() {
   const { volume, spend, total, items } = useLoaderData<typeof loader>();
-  const [selectedItems, setSelectedItems] = useState<Item[]>([
-    { itemId: 641, name: "toast" },
-  ]);
+  const [selectedItems, setSelectedItems] = useState<Item[]>([]);
 
   return (
     <div style={{ display: "flex" }}>
