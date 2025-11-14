@@ -1,0 +1,78 @@
+import { format, subDays } from "date-fns";
+import { Prisma } from "../generated/prisma/client";
+
+const BASIC_TOKEN = Buffer.from(
+  `${process.env["USERNAME"]}:${process.env["PASSWORD"]}`,
+).toString("base64");
+
+export type SaleResponse = {
+  source: "mall" | "flea";
+  buyer: number;
+  seller: number;
+  item: number;
+  quantity: number;
+  unitPrice: Prisma.Decimal;
+  date: Date;
+};
+
+function getBounds(
+  start: Date | undefined,
+  end: Date | undefined,
+): [start: Date, end: Date] {
+  const e = end ?? new Date();
+  if (!start) {
+    return [subDays(e, 16), e];
+  }
+
+  return [start, e];
+}
+
+export function parseLine(line: string): SaleResponse {
+  const parts = line.split(",");
+  const quantity = Number(parts[4]);
+  return {
+    source: parts[0] === "m" ? "mall" : "flea",
+    buyer: Number(parts[1]),
+    seller: Number(parts[2]),
+    item: Number(parts[3]),
+    quantity,
+    unitPrice: Prisma.Decimal(parts[5]).div(quantity),
+    date: new Date(parts[6]),
+  };
+}
+
+export async function query(
+  items: number | number[] | null,
+  start?: Date,
+  end?: Date,
+): Promise<SaleResponse[]> {
+  const [startDate, endDate] = getBounds(start, end);
+
+  const body = new URLSearchParams({
+    startstamp: format(startDate, "yyyyMMddHHmmss"),
+    endstamp: format(endDate, "yyyyMMddHHmmss"),
+    items: Array.isArray(items)
+      ? items.join(",")
+      : items === null
+        ? ""
+        : items.toString(),
+    source: "0",
+  });
+
+  const response = await fetch(
+    "https://dev.kingdomofloathing.com/econ/result.php",
+    {
+      method: "POST",
+      body,
+      headers: new Headers({
+        Authorization: `Basic ${BASIC_TOKEN}`,
+      }),
+    },
+  );
+
+  return (await response.text())
+    .trim()
+    .split("\n")
+    .slice(1, -1) // Remove <pre> and </pre>
+    .map(parseLine);
+}

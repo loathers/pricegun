@@ -1,0 +1,60 @@
+import { useLoaderData } from "react-router";
+
+import { mostSpend, mostVolume, prisma } from "~/db.server";
+import type { Route } from "./+types/home";
+import { Chart } from "~/components/Chart";
+import { numberFormatter } from "~/utils";
+import { Spend } from "~/components/Spend";
+import { Volume } from "~/components/Volume";
+import { useState } from "react";
+import { ItemSelect, type Item } from "~/components/ItemSelect";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "New React Router App" },
+    { name: "description", content: "Welcome to React Router!" },
+  ];
+}
+
+export async function loader() {
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+  const volume = await mostVolume(since);
+  const spend = await mostSpend(since);
+  const total = await prisma.sale.count({});
+  const items = await prisma.item.findMany({
+    select: { itemId: true, name: true },
+  });
+
+  return { volume, spend, total, items };
+}
+
+export default function Home() {
+  const { volume, spend, total, items } = useLoaderData<typeof loader>();
+  const [selectedItems, setSelectedItems] = useState<Item[]>([
+    { itemId: 641, name: "toast" },
+  ]);
+
+  return (
+    <div style={{ display: "flex" }}>
+      <section>
+        <header>
+          <h1>Pricegun 🏷️ 🔫</h1>
+          <p>Now tracking {numberFormatter.format(total)} transactions!</p>
+        </header>
+        <section>
+          <Spend data={spend} />
+          <Volume data={volume} />
+        </section>
+      </section>
+      <section style={{ flexBasis: "100%" }}>
+        <ItemSelect
+          items={items}
+          value={selectedItems}
+          onChange={setSelectedItems}
+        />
+        <Chart items={selectedItems} />
+      </section>
+    </div>
+  );
+}
