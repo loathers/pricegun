@@ -17,6 +17,7 @@
     "paths": {
       "~/*": ["./app/*"]
     },
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "esModuleInterop": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,

@@ -1,5 +1,6 @@
 import { useLoaderData } from "react-router";
 
+import styles from "./home.module.css";
 import { getSpendLeaderboard, getVolumeLeaderboard, prisma } from "~/db.server";
 import type { Route } from "./+types/home";
 import { Chart } from "~/components/Chart";
@@ -37,7 +38,7 @@ export default function Home() {
   const [selectedItems, setSelectedItems] = useState<Item[]>([]);
 
   return (
-    <div style={{ display: "flex" }}>
+    <div className={styles.homeContainer}>
       <section>
         <header>
           <h1>Pricegun 🏷️ 🔫</h1>
@@ -48,7 +49,7 @@ export default function Home() {
           <Volume data={volume} />
         </section>
       </section>
-      <section style={{ flexBasis: "100%" }}>
+      <section className={styles.chart}>
         <ItemSelect
           items={items}
           value={selectedItems}

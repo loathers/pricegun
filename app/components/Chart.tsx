@@ -14,6 +14,7 @@ import { useEffect, useMemo } from "react";
 
 import { type loader as itemLoader } from "../routes/api.$itemid";
 import type { Item } from "./ItemSelect";
+import { dateFormatter, shortNumberFormatter } from "~/utils";
 
 const COLORS = [
   "#003a7d",
@@ -25,12 +26,6 @@ const COLORS = [
   "#f9e858",
   "#d83034",
 ];
-
-const numberFormatter = new Intl.NumberFormat(undefined);
-const dateFormatter = new Intl.DateTimeFormat(undefined, {
-  month: "short",
-  day: "numeric",
-});
 
 type Props = {
   items: Item[];
@@ -94,12 +89,13 @@ export function Chart({ items }: Props) {
           yAxisId="left"
           orientation="left"
           allowDecimals={false}
+          tickFormatter={(v: number) => shortNumberFormatter.format(v)}
           label={{ value: "Volume", angle: -90, position: "insideLeft" }}
         />
         <YAxis
           yAxisId="right"
           orientation="right"
-          tickFormatter={(v: number) => numberFormatter.format(v)}
+          tickFormatter={(v: number) => shortNumberFormatter.format(v)}
           label={{ value: `Price`, angle: 90, position: "insideRight" }}
         />
         <Tooltip<number, `${string} Price` | `${string} Volume`>

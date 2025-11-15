@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 
+import styles from "./ItemSelect.module.css";
+
 export type Item = { itemId: number; name: string | null };
 
 type Props = {
@@ -31,7 +33,7 @@ export function ItemSelect({ items, value, onChange }: Props) {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "row", gap: "0.5rem" }}>
+    <div className={styles.container}>
       <select onChange={handleSelect} disabled={value.length >= 8}>
         <option>[Browse sales history for an item]</option>
         {filteredItems.map((i) => (

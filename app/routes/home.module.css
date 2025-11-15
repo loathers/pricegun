@@ -1,0 +1,22 @@
+.homeContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 2em;
+}
+
+.chart {
+  flex-basis: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+@media only screen and (max-width: 1000px) {
+  .homeContainer {
+    flex-direction: column;
+  }
+
+  .chart {
+    flex-basis: 400px;
+  }
+}
