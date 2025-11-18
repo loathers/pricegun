@@ -4,9 +4,9 @@ import { createClient } from "data-of-loathing";
 import { prisma } from "../app/db.server";
 import { query } from "./econ";
 import { deriveValue } from "./value";
-import type { Sale } from "~/generated/prisma/client";
 
 const MIN_SALES = 20;
+const RECENT_CUTOFF_DAYS = 14;
 
 const dol = createClient();
 
@@ -103,7 +103,7 @@ async function ingestSales() {
 async function getGreaterOfRecentOrMinSales(
   itemId: number,
   recentCutoff: Date,
-  minSales = MIN_SALES,
+  minSales: number,
 ) {
   const recent = await prisma.sale.findMany({
     where: {
@@ -129,14 +129,18 @@ async function recalculateValues(itemIds: number[]) {
     console.log(`(Re)calculating value for item ${itemId}`);
 
     const now = new Date();
-    const twoWeeksAgo = subDays(now, 14);
+    const recentCutoff = subDays(now, RECENT_CUTOFF_DAYS);
 
-    const sales = await getGreaterOfRecentOrMinSales(itemId, twoWeeksAgo);
+    const sales = await getGreaterOfRecentOrMinSales(
+      itemId,
+      recentCutoff,
+      MIN_SALES,
+    );
 
     const value = deriveValue(sales);
 
     const volume = sales
-      .filter((s) => s.date >= twoWeeksAgo)
+      .filter((s) => s.date >= recentCutoff)
       .reduce((acc, s) => acc + s.quantity, 0);
 
     await prisma.item.upsert({
