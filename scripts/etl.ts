@@ -5,10 +5,18 @@ import { prisma } from "../app/db.server";
 import { query } from "./econ";
 import { deriveValue } from "./value";
 
+const MIN_SALES = 20;
+const RECENT_CUTOFF_DAYS = 14;
+
 const dol = createClient();
 
 async function main() {
-  const itemIds = await ingestSales();
+  const args = process.argv.slice(2);
+  const itemIds = args.includes("--revalue")
+    ? (await prisma.item.findMany({ select: { itemId: true } })).map(
+        (i) => i.itemId,
+      )
+    : await ingestSales();
   await recalculateValues(itemIds);
   await fetchItemData();
 }
@@ -92,19 +100,50 @@ async function ingestSales() {
   return [...new Set(sales.map((s) => s.item))];
 }
 
+async function getGreaterOfRecentOrMinSales(
+  itemId: number,
+  recentCutoff: Date,
+  minSales: number,
+) {
+  const recent = await prisma.sale.findMany({
+    where: {
+      itemId,
+      date: { gte: recentCutoff },
+    },
+    orderBy: { date: "desc" },
+  });
+
+  if (recent.length >= minSales) {
+    return recent;
+  }
+
+  return await prisma.sale.findMany({
+    where: { itemId },
+    orderBy: { date: "desc" },
+    take: minSales,
+  });
+}
+
 async function recalculateValues(itemIds: number[]) {
   for (const itemId of itemIds.sort()) {
     console.log(`(Re)calculating value for item ${itemId}`);
-    const sales = await prisma.sale.findMany({
-      where: { itemId },
-    });
-    const value = deriveValue(sales);
+
     const now = new Date();
-    const twoWeeksAgo = subDays(now, 14);
+    const recentCutoff = subDays(now, RECENT_CUTOFF_DAYS);
+
+    const sales = await getGreaterOfRecentOrMinSales(
+      itemId,
+      recentCutoff,
+      MIN_SALES,
+    );
+
+    const value = deriveValue(sales);
+
     const volume = sales
-      .filter((s) => s.date >= twoWeeksAgo)
+      .filter((s) => s.date >= recentCutoff)
       .reduce((acc, s) => acc + s.quantity, 0);
-    const r = await prisma.item.upsert({
+
+    await prisma.item.upsert({
       where: { itemId },
       create: {
         itemId,
