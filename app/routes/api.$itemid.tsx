@@ -7,11 +7,16 @@ export async function loader({ params }: Route.LoaderArgs) {
     .map(Number)
     .filter(Number.isInteger);
 
-  const items = await prisma.item.findMany({
-    where: {
-      itemId: { in: itemIds },
-    },
-  });
+  const items = (
+    await prisma.item.findMany({
+      where: {
+        itemId: { in: itemIds },
+      },
+    })
+  ).map((i) => ({
+    ...i,
+    value: i.value?.toNumber() ?? null,
+  }));
 
   const history = Object.groupBy(
     await getSalesHistory(itemIds),

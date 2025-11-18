@@ -7,6 +7,7 @@ The algorithm is constantly being improved and updated, but is currently based o
 ```math
 P_{\mathrm{TWAP}} = \frac{\sum_{j}{P_j \cdot e^{-\lambda T_j} \cdot V_j^E}}{\sum_j{T_j} \cdot V_j^E}
 ```
+
 ```math
 \lambda = \frac{ln(2)}{H}
 ```

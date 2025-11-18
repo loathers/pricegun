@@ -68,14 +68,19 @@ export async function getSpendLeaderboard(since: Date) {
 }
 
 export async function getSalesHistory(itemIds: number[]) {
-  return prisma.$queryRaw<
-    { itemId: number; date: Date; volume: number; price: number }[]
+  const results = await prisma.$queryRaw<
+    {
+      itemId: number;
+      date: Date;
+      volume: BigInt;
+      price: Prisma.Decimal;
+    }[]
   >`
     SELECT
       "itemId",
       date_trunc('day', "date")::date AS "date",
       SUM("quantity")::integer AS "volume",
-      AVG("unitPrice")::integer AS "price"
+      AVG("unitPrice") AS "price"
     FROM
       "Sale"
     WHERE
@@ -86,4 +91,9 @@ export async function getSalesHistory(itemIds: number[]) {
     ORDER BY
       "date" ASC
   `;
+
+  return results.map((r) => ({
+    ...r,
+    price: r.price.toNumber(),
+  }));
 }
