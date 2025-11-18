@@ -5,5 +5,6 @@ RUN corepack enable
 RUN yarn install
 RUN yarn build
 RUN yarn prisma migrate deploy
+RUN yarn etl --revalue
 EXPOSE 3000
 CMD ["yarn", "start"]
