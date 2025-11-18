@@ -2,7 +2,7 @@ import { differenceInSeconds, subDays } from "date-fns";
 import { Prisma, type Sale } from "../app/generated/prisma/client.js";
 
 const VOLUME_EXPONENT = 0.5;
-const HL = Math.LN2 / 86400; // One day
+const HL = Math.LN2 / 259_200; // Three days
 
 export function deriveValue(sales: Sale[]) {
   if (sales.length === 0) return 0;

@@ -22,7 +22,7 @@ where
 - $P_j$ is the price of the item at a given transaction
 - $w_j$ is the time weighting coefficient
 - $T_j$ is the time since the transaction epoch (now) in seconds
-- $H$ is the halflife for transaction weighting (one day) in seconds
+- $H$ is the halflife for transaction weighting (three days) in seconds
 - $V_j$ is the volume of a given transaction
 - $E$ is a factor for dampening the impact of sudden high volume transactions
 - $j$ is the individual transaction
