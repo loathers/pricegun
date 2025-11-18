@@ -84,7 +84,8 @@ export async function getSalesHistory(itemIds: number[]) {
     FROM
       "Sale"
     WHERE
-      "itemId" = ANY (${itemIds})
+      "itemId" = ANY (${itemIds}) AND
+      "Sale"."date" >= NOW() - INTERVAL '14 days'
     GROUP BY
       "itemId",
       date_trunc('day', "date")::date
