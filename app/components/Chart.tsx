@@ -14,7 +14,7 @@ import { useEffect, useMemo } from "react";
 
 import { type loader as itemLoader } from "../routes/api.$itemid";
 import type { Item } from "./ItemSelect";
-import { dateFormatter, shortNumberFormatter } from "~/utils";
+import { dateFormatter, numberFormatter, shortNumberFormatter } from "~/utils";
 
 const COLORS = [
   "#003a7d",
@@ -28,20 +28,19 @@ const COLORS = [
 ];
 
 type Props = {
-  items: Item[];
+  item: Item | null;
 };
 
-export function Chart({ items }: Props) {
+export function Chart({ item }: Props) {
   const fetcher = useFetcher<typeof itemLoader>();
 
   useEffect(() => {
-    if (fetcher.state === "loading") return;
-    if (items.length === 0) return;
-    fetcher.load(`/api/${items.map((i) => i.itemId).join(",")}`);
-  }, [items]);
+    if (item === null) return;
+    fetcher.load(`/api/${item.itemId}`);
+  }, [item]);
 
   const { data, series } = useMemo(() => {
-    if (items.length === 0) return { data: [], series: [] };
+    if (item === null) return { data: [], series: [] };
     if (!fetcher.data || "error" in fetcher.data)
       return { data: [], series: [] };
     const itemData = Array.isArray(fetcher.data)
@@ -75,7 +74,7 @@ export function Chart({ items }: Props) {
       });
 
     return { series, data };
-  }, [fetcher.data, items]);
+  }, [fetcher.data, item]);
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -106,6 +105,7 @@ export function Chart({ items }: Props) {
               day: "numeric",
             })
           }
+          formatter={(value, name) => [numberFormatter.format(value), name]}
         />
         {series.map((s, i) => (
           <Bar

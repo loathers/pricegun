@@ -35,7 +35,7 @@ export async function loader() {
 
 export default function Home() {
   const { volume, spend, total, items } = useLoaderData<typeof loader>();
-  const [selectedItems, setSelectedItems] = useState<Item[]>([]);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
   return (
     <div className={styles.homeContainer}>
@@ -52,10 +52,10 @@ export default function Home() {
       <section className={styles.chart}>
         <ItemSelect
           items={items}
-          value={selectedItems}
-          onChange={setSelectedItems}
+          value={selectedItem}
+          onChange={setSelectedItem}
         />
-        <Chart items={selectedItems} />
+        <Chart item={selectedItem} />
       </section>
     </div>
   );

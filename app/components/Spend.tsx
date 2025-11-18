@@ -16,7 +16,7 @@ export function Spend({ data }: Props) {
       <ol>
         {data.map((item) => (
           <li key={item.itemId}>
-            {item.name}: {numberFormatter.format(item.quantity)} for a total of{" "}
+            {item.name} x {numberFormatter.format(item.quantity)}:{" "}
             {numberFormatter.format(item.spend)} meat
           </li>
         ))}

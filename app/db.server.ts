@@ -80,7 +80,7 @@ export async function getSalesHistory(itemIds: number[]) {
       "itemId",
       date_trunc('day', "date")::date AS "date",
       SUM("quantity")::integer AS "volume",
-      AVG("unitPrice") AS "price"
+      ROUND(AVG("unitPrice"), 2) AS "price"
     FROM
       "Sale"
     WHERE

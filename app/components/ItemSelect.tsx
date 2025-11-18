@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import styles from "./ItemSelect.module.css";
 
@@ -6,35 +6,30 @@ export type Item = { itemId: number; name: string | null };
 
 type Props = {
   items: Item[];
-  value: Item[];
-  onChange: (value: Item[]) => void;
+  value: Item | null;
+  onChange: (value: Item) => void;
 };
 
 export function ItemSelect({ items, value, onChange }: Props) {
   const filteredItems = useMemo(
-    () =>
-      items
-        .filter((i) => !value.some((v) => v.itemId === i.itemId))
-        .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? "")),
+    () => items.sort((a, b) => (a.name ?? "").localeCompare(b.name ?? "")),
     [items, value],
   );
 
-  const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const itemId = Number(e.target.value);
-    const item = items.find((i) => i.itemId === itemId);
-    if (item && !value.some((v) => v.itemId === itemId)) {
-      onChange([...value, item]);
-    }
-  };
-
-  const handleRemove = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const itemId = Number(e.currentTarget.dataset.itemid);
-    onChange(value.filter((v) => v.itemId !== itemId));
-  };
+  const handleSelect = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const itemId = Number(e.target.value);
+      const item = items.find((i) => i.itemId === itemId);
+      if (item && item.itemId !== value?.itemId) {
+        onChange(item);
+      }
+    },
+    [items, onChange, value],
+  );
 
   return (
     <div className={styles.container}>
-      <select onChange={handleSelect} disabled={value.length >= 8}>
+      <select onChange={handleSelect} value={value?.itemId}>
         <option>[Browse sales history for an item]</option>
         {filteredItems.map((i) => (
           <option key={i.itemId} value={i.itemId}>
@@ -42,14 +37,6 @@ export function ItemSelect({ items, value, onChange }: Props) {
           </option>
         ))}
       </select>
-      {value.map((i) => (
-        <div key={i.itemId}>
-          {i.name ?? `[${i.itemId}]`}{" "}
-          <button data-itemid={i.itemId} onClick={handleRemove}>
-            x
-          </button>
-        </div>
-      ))}
     </div>
   );
 }
