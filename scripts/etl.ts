@@ -4,11 +4,19 @@ import { createClient } from "data-of-loathing";
 import { prisma } from "../app/db.server";
 import { query } from "./econ";
 import { deriveValue } from "./value";
+import type { Sale } from "~/generated/prisma/client";
+
+const MIN_SALES = 20;
 
 const dol = createClient();
 
 async function main() {
-  const itemIds = await ingestSales();
+  const args = process.argv.slice(2);
+  const itemIds = args.includes("--revalue")
+    ? (await prisma.item.findMany({ select: { itemId: true } })).map(
+        (i) => i.itemId,
+      )
+    : await ingestSales();
   await recalculateValues(itemIds);
   await fetchItemData();
 }
@@ -92,12 +100,31 @@ async function ingestSales() {
   return [...new Set(sales.map((s) => s.item))];
 }
 
+async function getGreaterOfLastTwoWeeksOrMinSales(itemId: number) {
+  return await prisma.$queryRaw<Sale[]>`
+    WITH "ranked" AS (
+      SELECT
+        "Sale".*,
+        row_number() OVER (ORDER BY "date" DESC) AS "rn",
+        -- Count how many rows are in the last 14 days
+        SUM(
+          CASE WHEN "date" >= NOW() - INTERVAL '14 days' THEN 1 ELSE 0 END
+        ) OVER () AS "recentCount"
+      FROM "Sale"
+    )
+    SELECT *
+    FROM "ranked"
+    WHERE "rn" <= GREATEST("recentCount", ${MIN_SALES})
+    ORDER BY "date" DESC;
+  `;
+}
+
 async function recalculateValues(itemIds: number[]) {
   for (const itemId of itemIds.sort()) {
     console.log(`(Re)calculating value for item ${itemId}`);
-    const sales = await prisma.sale.findMany({
-      where: { itemId },
-    });
+
+    const sales = await getGreaterOfLastTwoWeeksOrMinSales(itemId);
+
     const value = deriveValue(sales);
     const now = new Date();
     const twoWeeksAgo = subDays(now, 14);
