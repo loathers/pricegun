@@ -125,7 +125,7 @@ async function getGreaterOfRecentOrMinSales(
 }
 
 async function recalculateValues(itemIds: number[]) {
-  for (const itemId of itemIds.sort()) {
+  for (const itemId of itemIds.sort((a, b) => a - b)) {
     console.log(`(Re)calculating value for item ${itemId}`);
 
     const now = new Date();
