@@ -101,22 +101,24 @@ async function ingestSales() {
 }
 
 async function getGreaterOfLastTwoWeeksOrMinSales(itemId: number) {
-  return await prisma.$queryRaw<Sale[]>`
-    WITH "ranked" AS (
-      SELECT
-        "Sale".*,
-        row_number() OVER (ORDER BY "date" DESC) AS "rn",
-        -- Count how many rows are in the last 14 days
-        SUM(
-          CASE WHEN "date" >= NOW() - INTERVAL '14 days' THEN 1 ELSE 0 END
-        ) OVER () AS "recentCount"
-      FROM "Sale"
-    )
-    SELECT *
-    FROM "ranked"
-    WHERE "rn" <= GREATEST("recentCount", ${MIN_SALES})
-    ORDER BY "date" DESC;
-  `;
+  const twoWeeksAgo = subDays(new Date(), 14);
+  const recent = await prisma.sale.findMany({
+    where: {
+      itemId,
+      date: { gte: twoWeeksAgo },
+    },
+    orderBy: { date: "desc" },
+  });
+
+  if (recent.length >= MIN_SALES) {
+    return recent;
+  }
+
+  return await prisma.sale.findMany({
+    where: { itemId },
+    orderBy: { date: "desc" },
+    take: MIN_SALES,
+  });
 }
 
 async function recalculateValues(itemIds: number[]) {
