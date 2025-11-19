@@ -1,5 +1,5 @@
 .container {
   display: flex;
-  flexdirection: row;
+  flex-direction: row;
   gap: 0.5rem;
 }
