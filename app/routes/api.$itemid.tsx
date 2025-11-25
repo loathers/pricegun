@@ -9,7 +9,7 @@ async function loadItem(itemId: number) {
     },
     include: {
       sales: {
-        orderBy: { date: "asc" },
+        orderBy: { date: "desc" },
         take: 20,
         select: {
           date: true,
@@ -38,16 +38,16 @@ export async function loader({ params }: Route.LoaderArgs) {
     .map(Number)
     .filter(Number.isInteger);
 
-  const itemData = await Promise.all(itemIds.map((itemId) => loadItem(itemId)));
+  const itemData = (
+    await Promise.all(itemIds.map((itemId) => loadItem(itemId)))
+  ).filter((i) => i !== null);
+
+  if (itemData.length === 0) {
+    return data({ error: "Not enough mall data to service request" }, 404);
+  }
 
   if (itemData.length === 1) {
-    const itemDatum = itemData[0];
-    if (!itemDatum)
-      return data(
-        { error: "Item has not appeared in enough mall searches" },
-        404,
-      );
-    return data(itemDatum);
+    return data(itemData[0]);
   }
 
   return data(itemData);
