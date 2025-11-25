@@ -2,41 +2,53 @@ import { data } from "react-router";
 import { getSalesHistory, prisma } from "~/db.server.js";
 import type { Route } from "./+types/api.$itemid.js";
 
+async function loadItem(itemId: number) {
+  const item = await prisma.item.findFirst({
+    where: {
+      itemId,
+    },
+    include: {
+      sales: {
+        orderBy: { date: "asc" },
+        take: 20,
+        select: {
+          date: true,
+          unitPrice: true,
+          quantity: true,
+        },
+      },
+    },
+  });
+
+  if (!item) return null;
+
+  return {
+    ...item,
+    sales: item.sales.map((sale) => ({
+      ...sale,
+      unitPrice: sale.unitPrice.toNumber(),
+    })),
+    value: item.value?.toNumber() ?? null,
+    history: await getSalesHistory(itemId),
+  };
+}
+
 export async function loader({ params }: Route.LoaderArgs) {
   const itemIds = params["itemid"]!.split(",")
     .map(Number)
     .filter(Number.isInteger);
 
-  const items = (
-    await prisma.item.findMany({
-      where: {
-        itemId: { in: itemIds },
-      },
-    })
-  ).map((i) => ({
-    ...i,
-    value: i.value?.toNumber() ?? null,
-  }));
+  const itemData = await Promise.all(itemIds.map((itemId) => loadItem(itemId)));
 
-  const history = Object.groupBy(
-    await getSalesHistory(itemIds),
-    (h) => h.itemId,
-  );
-
-  const itemsWithHistory = items.map((item) => ({
-    ...item,
-    history: history[item.itemId] ?? [],
-  }));
-
-  if (itemIds.length === 1) {
-    const result = itemsWithHistory[0];
-    if (!result)
+  if (itemData.length === 1) {
+    const itemDatum = itemData[0];
+    if (!itemDatum)
       return data(
         { error: "Item has not appeared in enough mall searches" },
         404,
       );
-    return data(result);
+    return data(itemDatum);
   }
 
-  return data(itemsWithHistory);
+  return data(itemData);
 }
