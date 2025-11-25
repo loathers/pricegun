@@ -1,0 +1,10 @@
+.list {
+  column-gap: 0;
+  column-count: 3;
+}
+
+@media (max-width: 800px) {
+  .list {
+    column-count: 1;
+  }
+}

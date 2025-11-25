@@ -67,7 +67,9 @@ export async function getSpendLeaderboard(since: Date) {
   }));
 }
 
-export async function getSalesHistory(itemIds: number[]) {
+export async function getSalesHistory(itemId: number) {
+  // This function used to take a list of item ids. I refactored it to take a single
+  // item id to simplify its usage, but kept the SQL query the same for now.
   const results = await prisma.$queryRaw<
     {
       itemId: number;
@@ -84,7 +86,7 @@ export async function getSalesHistory(itemIds: number[]) {
     FROM
       "Sale"
     WHERE
-      "itemId" = ANY (${itemIds}) AND
+      "itemId" = ANY (${[itemId]}) AND
       "Sale"."date" >= NOW() - INTERVAL '14 days'
     GROUP BY
       "itemId",
