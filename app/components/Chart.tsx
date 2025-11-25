@@ -74,7 +74,7 @@ export function Chart({ item }: Props) {
             [`volume-${h.itemId}`]: h.volume,
             [`price-${h.itemId}`]: h.price,
           }),
-          { dateIso: day[0].date!.toISOString(), date: day[0].date },
+          { timestamp: day[0].date!.getTime(), date: day[0].date },
         );
       });
 
@@ -89,7 +89,13 @@ export function Chart({ item }: Props) {
         <ComposedChart data={data} barGap={1} barCategoryGap={4}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
-            dataKey="dateIso"
+            dataKey="timestamp"
+            type="number"
+            scale="time"
+            domain={[
+              (dataMin: number) => dataMin - 24 * 60 * 60 * 1000,
+              (dataMax: number) => dataMax + 24 * 60 * 60 * 1000,
+            ]}
             tickFormatter={(iso: string) =>
               shortDateFormatter.format(new Date(iso))
             }

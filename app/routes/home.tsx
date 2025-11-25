@@ -7,7 +7,7 @@ import { Chart } from "~/components/Chart";
 import { numberFormatter } from "~/utils";
 import { Spend } from "~/components/Spend";
 import { Volume } from "~/components/Volume";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ItemSelect, type Item } from "~/components/ItemSelect";
 
 export function meta({}: Route.MetaArgs) {
@@ -36,6 +36,10 @@ export async function loader() {
 export default function Home() {
   const { volume, spend, total, items } = useLoaderData<typeof loader>();
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+
+  useEffect(() => {
+    setSelectedItem((s) => s ?? volume[0]);
+  }, [volume]);
 
   return (
     <div className={styles.homeContainer}>
