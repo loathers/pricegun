@@ -1,6 +1,5 @@
 import { expect, test } from "vitest";
 import { parseLine } from "./econ";
-import { Prisma } from "../app/generated/prisma/client";
 
 test("Parse simple mall line", () => {
   const line = "m,1197090,1345884,641,1,100,2024-05-23 12:08:40";
@@ -11,7 +10,7 @@ test("Parse simple mall line", () => {
     seller: 1345884,
     item: 641,
     quantity: 1,
-    unitPrice: Prisma.Decimal(100),
+    unitPrice: 100,
     source: "mall",
     date: new Date("2024-05-23 12:08:40"),
   });
@@ -26,7 +25,7 @@ test("Parse quantity mall line", () => {
     seller: 2270868,
     item: 641,
     quantity: 16,
-    unitPrice: Prisma.Decimal(100),
+    unitPrice: 100,
     source: "mall",
     date: new Date("2024-05-30 17:45:29"),
   });
@@ -41,7 +40,7 @@ test("Parse flea market line", () => {
     seller: 100105,
     item: 319,
     quantity: 1,
-    unitPrice: Prisma.Decimal(720),
+    unitPrice: 720,
     source: "flea",
     date: new Date("2024-05-19 03:56:36"),
   });
