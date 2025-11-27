@@ -43,12 +43,28 @@ export async function loader({ params }: Route.LoaderArgs) {
   ).filter((i) => i !== null);
 
   if (itemData.length === 0) {
-    return data({ error: "Not enough mall data to service request" }, 404);
+    return data(
+      { error: "Not enough mall data to service request" },
+      {
+        status: 404,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
+      },
+    );
   }
 
   if (itemData.length === 1) {
-    return data(itemData[0]);
+    return data(itemData[0], {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
   }
 
-  return data(itemData);
+  return data(itemData, {
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
+  });
 }
