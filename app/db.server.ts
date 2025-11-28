@@ -104,8 +104,8 @@ export async function getItemWithSales(itemId: number, numberOfSales = 20) {
 
   return {
     ...item,
-    sales,
-    value: item.value,
+    sales: sales.map((s) => ({ ...s, unitPrice: Number(s.unitPrice) })),
+    value: Number(item.value),
     history: await getSalesHistory(itemId),
   };
 }

@@ -10,6 +10,12 @@ const RECENT_CUTOFF_DAYS = 14;
 
 const dol = createClient();
 
+function chunkArray<T>(arr: T[], size: number): T[][] {
+  return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+    arr.slice(i * size, i * size + size),
+  );
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const itemIds = args.includes("--revalue")
@@ -79,36 +85,42 @@ async function ingestSales() {
     `Found ${sales.length} sales since ${format(since, "yyyy-MM-dd HH:mm:ss")}`,
   );
 
+  const chunks = chunkArray(sales, 1000);
+
   // Create the items first to avoid foreign key violations
-  await db
-    .insertInto("Item")
-    .values(
-      sales.map((s) => ({
-        itemId: s.item,
-        value: 0,
-        volume: 0,
-        date: new Date(0),
-      })),
-    )
-    .onConflict((oc) => oc.doNothing())
-    .execute();
+  for (const chunk of chunks) {
+    await db
+      .insertInto("Item")
+      .values(
+        chunk.map((s) => ({
+          itemId: s.item,
+          value: 0,
+          volume: 0,
+          date: new Date(0),
+        })),
+      )
+      .onConflict((oc) => oc.doNothing())
+      .execute();
+  }
 
   // Insert sales
-  await db
-    .insertInto("Sale")
-    .values(
-      sales.map((s) => ({
-        date: s.date,
-        unitPrice: s.unitPrice,
-        quantity: s.quantity,
-        source: s.source,
-        itemId: s.item,
-        buyerId: s.buyer,
-        sellerId: s.seller,
-      })),
-    )
-    .onConflict((oc) => oc.doNothing())
-    .execute();
+  for (const chunk of chunks) {
+    await db
+      .insertInto("Sale")
+      .values(
+        chunk.map((s) => ({
+          date: s.date,
+          unitPrice: s.unitPrice,
+          quantity: s.quantity,
+          source: s.source,
+          itemId: s.item,
+          buyerId: s.buyer,
+          sellerId: s.seller,
+        })),
+      )
+      .onConflict((oc) => oc.doNothing())
+      .execute();
+  }
 
   return [...new Set(sales.map((s) => s.item))];
 }

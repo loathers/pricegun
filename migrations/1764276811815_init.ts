@@ -6,7 +6,7 @@ export async function up(db: Kysely<any>): Promise<void> {
   await sql`
     DO $$
     BEGIN
-      IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'salesource') THEN
+      IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'SaleSource') THEN
         CREATE TYPE "SaleSource" AS ENUM ('mall', 'flea');
       END IF;
     END
