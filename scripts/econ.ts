@@ -73,5 +73,6 @@ export async function query(
     .trim()
     .split("\n")
     .slice(1, -1) // Remove <pre> and </pre>
-    .map(parseLine);
+    .map(parseLine)
+    .filter((s) => s.buyer !== s.seller);
 }

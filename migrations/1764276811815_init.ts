@@ -1,5 +1,3 @@
-// 0001_init_mall_schema.ts
-
 import { Kysely, sql } from "kysely";
 
 export async function up(db: Kysely<any>): Promise<void> {
@@ -13,39 +11,43 @@ export async function up(db: Kysely<any>): Promise<void> {
     $$;
   `.execute(db);
 
-  await sql`
-    CREATE TABLE IF NOT EXISTS "Item" (
-      "itemId"   INTEGER PRIMARY KEY,
-      "value"    NUMERIC NOT NULL,
-      "volume"   INTEGER NOT NULL,
-      "date"     TIMESTAMPTZ NOT NULL,
-      "name"     TEXT,
-      "image"    TEXT NOT NULL DEFAULT 'nopic.gif'
-    );
-  `.execute(db);
+  db.schema
+    .createTable("Item")
+    .ifNotExists()
+    .addColumn("itemId", "integer", (col) => col.primaryKey())
+    .addColumn("value", "numeric", (col) => col.notNull())
+    .addColumn("volume", "integer", (col) => col.notNull())
+    .addColumn("date", "timestamptz", (col) => col.notNull())
+    .addColumn("name", "text")
+    .addColumn("image", "text", (col) => col.notNull().defaultTo("'nopic.gif'"))
+    .execute();
 
-  await sql`
-    CREATE TABLE IF NOT EXISTS "Sale" (
-      "source"    "SaleSource" NOT NULL,
-      "buyerId"   INTEGER      NOT NULL,
-      "sellerId"  INTEGER      NOT NULL,
-      "itemId"    INTEGER      NOT NULL,
-      "quantity"  INTEGER      NOT NULL,
-      "unitPrice" NUMERIC      NOT NULL,
-      "date"      TIMESTAMPTZ  NOT NULL,
-      CONSTRAINT "Sale_pkey"
-        PRIMARY KEY ("source", "buyerId", "sellerId", "itemId", "date"),
-      CONSTRAINT "Sale_itemId_fkey"
-        FOREIGN KEY ("itemId") REFERENCES "Item" ("itemId")
-    );
-  `.execute(db);
+  db.schema
+    .createTable("Sale")
+    .ifNotExists()
+    .addColumn("source", sql`"SaleSource"`, (col) => col.notNull())
+    .addColumn("buyerId", "integer", (col) => col.notNull())
+    .addColumn("sellerId", "integer", (col) => col.notNull())
+    .addColumn("itemId", "integer", (col) => col.notNull())
+    .addColumn("quantity", "integer", (col) => col.notNull())
+    .addColumn("unitPrice", "numeric", (col) => col.notNull())
+    .addColumn("date", "timestamptz", (col) => col.notNull())
+    .addPrimaryKeyConstraint("Sale_pkey", [
+      "source",
+      "buyerId",
+      "sellerId",
+      "itemId",
+      "date",
+    ])
+    .addForeignKeyConstraint("Sale_itemId_fkey", ["itemId"], "Item", ["itemId"])
+    .execute();
 
-  await sql`DROP TABLE IF EXISTS "_prisma_migrations";`.execute(db);
+  await db.schema.dropTable("_prisma_migrations").ifExists().execute();
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-  await sql`DROP TABLE IF EXISTS "Sale";`.execute(db);
-  await sql`DROP TABLE IF EXISTS "Item";`.execute(db);
+  await db.schema.dropTable("Sale").ifExists().execute();
+  await db.schema.dropTable("Item").ifExists().execute();
 
   await sql`
     DO $$

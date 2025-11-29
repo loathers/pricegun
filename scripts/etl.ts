@@ -18,13 +18,21 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
 
 async function main() {
   const args = process.argv.slice(2);
-  const itemIds = args.includes("--revalue")
-    ? (await db.selectFrom("Item").select("itemId").execute()).map(
-        (i) => i.itemId,
-      )
-    : await ingestSales();
+  if (args.includes("--revalue")) return await recalculateAllValues();
+  const itemIds = await ingestSales();
   await recalculateValues(itemIds);
   await fetchItemData();
+}
+
+async function recalculateAllValues() {
+  const itemIds = (
+    await db
+      .selectFrom("Item")
+      .select("itemId")
+      .orderBy("itemId", "asc")
+      .execute()
+  ).map((i) => i.itemId);
+  await recalculateValues(itemIds);
 }
 
 async function fetchItemData() {
@@ -151,7 +159,7 @@ async function getGreaterOfRecentOrMinSales(
     .execute();
 }
 
-async function recalculateValues(itemIds: number[]) {
+export async function recalculateValues(itemIds: number[]) {
   for (const itemId of itemIds.sort((a, b) => a - b)) {
     console.log(`(Re)calculating value for item ${itemId}`);
 
