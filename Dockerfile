@@ -4,7 +4,6 @@ WORKDIR /app
 RUN corepack enable
 RUN yarn install
 RUN yarn build
-RUN yarn prisma migrate deploy
-RUN yarn etl --revalue
+RUN yarn kysely migrate:latest
 EXPOSE 3000
 CMD ["yarn", "start"]

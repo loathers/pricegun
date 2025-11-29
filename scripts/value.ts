@@ -1,5 +1,5 @@
 import { differenceInSeconds, subDays } from "date-fns";
-import { Prisma, type Sale } from "../app/generated/prisma/client.js";
+import type { Sale } from "~/types";
 
 const VOLUME_EXPONENT = 0.5;
 const HL = Math.LN2 / 259_200; // Three days
@@ -15,12 +15,12 @@ export function deriveValue(sales: Sale[]) {
       const timeValue = Math.exp(-HL * age);
       const volumeValue = s.quantity ** VOLUME_EXPONENT;
       return [
-        s.unitPrice.mul(timeValue).mul(volumeValue).add(n),
+        s.unitPrice * timeValue * volumeValue + n,
         d + timeValue * volumeValue,
       ];
     },
-    [new Prisma.Decimal(0), 0],
+    [0, 0],
   );
 
-  return numerator.div(denominator).toDecimalPlaces(2).toNumber();
+  return Number((numerator / denominator).toFixed(2));
 }

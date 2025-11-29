@@ -18,5 +18,4 @@ jobs:
           cache: "yarn"
 
       - run: yarn
-      - run: yarn prisma generate
       - run: yarn test

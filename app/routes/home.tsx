@@ -1,7 +1,12 @@
 import { useLoaderData } from "react-router";
 
 import styles from "./home.module.css";
-import { getSpendLeaderboard, getVolumeLeaderboard, prisma } from "~/db.server";
+import {
+  getAllItems,
+  getSpendLeaderboard,
+  getTotalSales,
+  getVolumeLeaderboard,
+} from "~/db.server";
 import type { Route } from "./+types/home";
 import { Chart } from "~/components/Chart";
 import { numberFormatter } from "~/utils";
@@ -25,10 +30,8 @@ export async function loader() {
 
   const volume = await getVolumeLeaderboard(since);
   const spend = await getSpendLeaderboard(since);
-  const total = await prisma.sale.count({});
-  const items = await prisma.item.findMany({
-    select: { itemId: true, name: true },
-  });
+  const total = await getTotalSales();
+  const items = await getAllItems();
 
   return { volume, spend, total, items };
 }
