@@ -71,7 +71,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     )
   ).filter((i) => i !== null);
 
-  if (itemData.length === 1) {
+  if (itemIds.length === 1) {
     return data(itemData[0], {
       status: 200,
       headers: {
