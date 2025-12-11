@@ -23,7 +23,9 @@ export async function loader({ params }: Route.LoaderArgs) {
     );
   }
 
-  if (itemData.length === 1) {
+  // Check itemIds here. We may have filtered out ones for which we don't have data
+  // but the user will be expecting an array.
+  if (itemIds.length === 1) {
     return data(itemData[0], {
       headers: {
         "Access-Control-Allow-Origin": "*",
