@@ -25,6 +25,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 
   if (itemData.length === 1) {
     return data(itemData[0], {
+      status: 200,
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
@@ -32,6 +33,7 @@ export async function loader({ params }: Route.LoaderArgs) {
   }
 
   return data(itemData, {
+    status: 200,
     headers: {
       "Access-Control-Allow-Origin": "*",
     },
