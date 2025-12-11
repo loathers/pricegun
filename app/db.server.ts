@@ -121,3 +121,29 @@ export async function getTotalSales() {
 export async function getAllItems() {
   return db.selectFrom("Item").select(["itemId", "name"]).execute();
 }
+
+export async function getSalesByDateRange(
+  itemId: number,
+  startDate: Date,
+  endDate: Date,
+  limit: number,
+) {
+  const sales = await db
+    .selectFrom("Sale")
+    .select([
+      "Sale.date as date",
+      "Sale.unitPrice as unitPrice",
+      "Sale.quantity as quantity",
+    ])
+    .where("Sale.itemId", "=", itemId)
+    .where("Sale.date", ">=", startDate)
+    .where("Sale.date", "<=", endDate)
+    .orderBy("Sale.date", "desc")
+    .limit(limit)
+    .execute();
+
+  return {
+    itemId,
+    sales: sales.map((s) => ({ ...s, unitPrice: Number(s.unitPrice) })),
+  };
+}

@@ -27,6 +27,7 @@ export async function loader({ params }: Route.LoaderArgs) {
   // but the user will be expecting an array.
   if (itemIds.length === 1) {
     return data(itemData[0], {
+      status: 200,
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
@@ -34,6 +35,7 @@ export async function loader({ params }: Route.LoaderArgs) {
   }
 
   return data(itemData, {
+    status: 200,
     headers: {
       "Access-Control-Allow-Origin": "*",
     },
