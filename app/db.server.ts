@@ -142,5 +142,8 @@ export async function getSalesByDateRange(
     .limit(limit)
     .execute();
 
-  return sales.map((s) => ({ ...s, unitPrice: Number(s.unitPrice) }));
+  return {
+    itemId,
+    sales: sales.map((s) => ({ ...s, unitPrice: Number(s.unitPrice) })),
+  };
 }

@@ -6,7 +6,10 @@ vi.mock("~/db.server.js");
 
 describe("Sales API", () => {
   it("should return sales data for a valid date range", async () => {
-    const mockSalesData = [{ date: new Date(), unitPrice: 100, quantity: 5 }];
+    const mockSalesData = {
+      itemId: 123,
+      sales: [{ date: new Date(), unitPrice: 100, quantity: 5 }],
+    };
     vi.spyOn(db, "getSalesByDateRange").mockResolvedValue(mockSalesData);
 
     const request = new Request(
@@ -21,8 +24,8 @@ describe("Sales API", () => {
       unstable_pattern: "",
     });
 
-    expect(response.init?.status).toBe(200);
-    expect(response.data).toBe(mockSalesData);
+    expect(response.init?.status).toStrictEqual(200);
+    expect(response.data).toStrictEqual(mockSalesData);
     expect(db.getSalesByDateRange).toHaveBeenCalledWith(
       123,
       new Date("2025-01-01"),
@@ -32,7 +35,10 @@ describe("Sales API", () => {
   });
 
   it("should use default limit if missing", async () => {
-    const mockSalesData = [{ date: new Date(), unitPrice: 100, quantity: 5 }];
+    const mockSalesData = {
+      itemId: 123,
+      sales: [{ date: new Date(), unitPrice: 100, quantity: 5 }],
+    };
     vi.spyOn(db, "getSalesByDateRange").mockResolvedValue(mockSalesData);
 
     const request = new Request(
@@ -47,13 +53,42 @@ describe("Sales API", () => {
       unstable_pattern: "",
     });
 
-    expect(response.init?.status).toBe(200);
-    expect(response.data).toBe(mockSalesData);
+    expect(response.init?.status).toStrictEqual(200);
+    expect(response.data).toStrictEqual(mockSalesData);
     expect(db.getSalesByDateRange).toHaveBeenCalledWith(
       123,
       new Date("2025-01-01"),
       new Date("2025-12-10T23:20:07.000Z"),
       20,
+    );
+  });
+
+  it("should return multiple sales", async () => {
+    const mockSalesData = {
+      itemId: 123,
+      sales: [{ date: new Date(), unitPrice: 100, quantity: 5 }],
+    };
+    vi.spyOn(db, "getSalesByDateRange").mockResolvedValue(mockSalesData);
+
+    const request = new Request(
+      "http://localhost/api/sales/123,123?start=2025-01-01&end=2025-12-10T23:20:07.000Z&limit=11",
+    );
+    const params = { itemid: "123,123" };
+
+    const response = await loader({
+      params,
+      request,
+      context: {},
+      unstable_pattern: "",
+    });
+
+    expect(response.init?.status).toStrictEqual(200);
+    expect(response.data).toStrictEqual([mockSalesData, mockSalesData]);
+    expect(db.getSalesByDateRange).toHaveBeenCalledWith(
+      123,
+      new Date("2025-01-01"),
+      new Date("2025-12-10T23:20:07.000Z"),
+      11,
     );
   });
 
@@ -70,7 +105,7 @@ describe("Sales API", () => {
         unstable_pattern: "",
       });
 
-      expect(response.init?.status).toBe(400);
+      expect(response.init?.status).toStrictEqual(400);
       expect(response.data).toEqual({
         error: "Missing 'start' or 'end' date",
       });
@@ -90,7 +125,7 @@ describe("Sales API", () => {
       unstable_pattern: "",
     });
 
-    expect(response.init?.status).toBe(400);
+    expect(response.init?.status).toStrictEqual(400);
     expect(response.data).toEqual({
       error: "'start' date must be before 'end' date",
     });
@@ -109,7 +144,7 @@ describe("Sales API", () => {
       unstable_pattern: "",
     });
 
-    expect(response.init?.status).toBe(400);
+    expect(response.init?.status).toStrictEqual(400);
     expect(response.data).toEqual({
       error: "Invalid date format for 'start' or 'end'",
     });
@@ -130,7 +165,7 @@ describe("Sales API", () => {
         unstable_pattern: "",
       });
 
-      expect(response.init?.status).toBe(400);
+      expect(response.init?.status).toStrictEqual(400);
       expect(response.data).toEqual({
         error: "Limit must be between 1 & 100",
       });

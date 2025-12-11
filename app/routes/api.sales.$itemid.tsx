@@ -5,7 +5,9 @@ import type { Route } from "./+types/api.sales.$itemid";
 const MAX_SALES = 100;
 
 export async function loader({ params, request }: Route.LoaderArgs) {
-  const itemId = Number(params["itemid"]);
+  const itemIds = params["itemid"]!.split(",")
+    .map(Number)
+    .filter(Number.isInteger);
   const url = new URL(request.url);
   const startStr = url.searchParams.get("start");
   const endStr = url.searchParams.get("end");
@@ -61,9 +63,24 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     );
   }
 
-  const result = await getSalesByDateRange(itemId, startDate, endDate, limit);
+  const itemData = (
+    await Promise.all(
+      itemIds.map((itemId) =>
+        getSalesByDateRange(itemId, startDate, endDate, limit),
+      ),
+    )
+  ).filter((i) => i !== null);
 
-  return data(result, {
+  if (itemData.length === 1) {
+    return data(itemData[0], {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+  }
+
+  return data(itemData, {
     status: 200,
     headers: {
       "Access-Control-Allow-Origin": "*",
