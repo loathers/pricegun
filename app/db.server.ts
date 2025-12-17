@@ -138,7 +138,7 @@ export async function getSalesByDateRange(
     .where("Sale.itemId", "=", itemId)
     .where("Sale.date", ">=", startDate)
     .where("Sale.date", "<=", endDate)
-    .orderBy("Sale.date", "desc")
+    .orderBy("Sale.date", "asc")
     .limit(limit)
     .execute();
 
