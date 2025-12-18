@@ -1,11 +1,14 @@
 import { dateFormatter, numberFormatter } from "~/utils";
 import styles from "./RecentSales.module.css";
+import type { Item } from "./ItemSelect";
 
 type Props = {
+  item: Item | null;
   sales: { date: Date; unitPrice: number; quantity: number }[];
 };
 
-export function RecentSales({ sales }: Props) {
+export function RecentSales({ item, sales }: Props) {
+  if (!item) return null;
   if (sales.length === 0) return null;
   return (
     <div>
@@ -13,7 +16,7 @@ export function RecentSales({ sales }: Props) {
       <ol className={styles.list}>
         {sales.map((sale) => (
           <li
-            key={`${sale.date.toISOString()}-${sale.unitPrice}-${sale.quantity}`}
+            key={`${item.itemId}-${sale.date.toISOString()}-${sale.unitPrice}-${sale.quantity}`}
           >
             {dateFormatter.format(sale.date)} - {sale.quantity} @{" "}
             {numberFormatter.format(sale.unitPrice)}

@@ -40,7 +40,7 @@ export function Chart({ item }: Props) {
   const fetcher = useFetcher<typeof itemLoader>();
 
   useEffect(() => {
-    if (item === null) return;
+    if (!item) return;
     fetcher.load(`/api/${item.itemId}`);
   }, [item]);
 
@@ -121,7 +121,7 @@ export function Chart({ item }: Props) {
                 day: "numeric",
               })
             }
-            formatter={(value, name) => [numberFormatter.format(value), name]}
+            formatter={(value, name) => [value && numberFormatter.format(value), name]}
           />
           {series.map((s, i) => (
             <Bar
@@ -167,7 +167,7 @@ export function Chart({ item }: Props) {
           ))}
         </ComposedChart>
       </ResponsiveContainer>
-      <RecentSales sales={sales} />
+      <RecentSales item={item} sales={sales} />
     </div>
   );
 }
