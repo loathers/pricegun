@@ -6,3 +6,12 @@
 # React Router
 /.react-router/
 /build/
+
+# Yarn with no Zero-Installs
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
