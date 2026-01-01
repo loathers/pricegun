@@ -23,6 +23,7 @@ export type NewItem = Insertable<ItemTable>;
 export type ItemUpdate = Updateable<ItemTable>;
 
 export type SaleTable = {
+  id: Generated<number>;
   source: SaleSource;
   buyerId: number;
   sellerId: number;

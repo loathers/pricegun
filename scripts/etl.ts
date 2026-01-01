@@ -2,7 +2,7 @@ import { format, sub, subDays } from "date-fns";
 import { createClient } from "data-of-loathing";
 
 import { db } from "../app/db.server";
-import { query } from "./econ";
+import { query, type SaleResponse } from "./econ";
 import { deriveValue } from "./value";
 
 const MIN_SALES = 20;
@@ -77,6 +77,29 @@ async function fetchItemData() {
   });
 }
 
+function salesMatch(
+  apiSale: SaleResponse,
+  dbSale: {
+    source: string;
+    buyerId: number;
+    sellerId: number;
+    itemId: number;
+    quantity: number;
+    unitPrice: string | number;
+    date: Date;
+  },
+) {
+  return (
+    apiSale.source === dbSale.source &&
+    apiSale.buyer === dbSale.buyerId &&
+    apiSale.seller === dbSale.sellerId &&
+    apiSale.item === dbSale.itemId &&
+    apiSale.quantity === dbSale.quantity &&
+    apiSale.unitPrice === Number(dbSale.unitPrice) &&
+    apiSale.date.getTime() === dbSale.date.getTime()
+  );
+}
+
 async function ingestSales() {
   const latest = await db
     .selectFrom("Sale")
@@ -93,7 +116,42 @@ async function ingestSales() {
     `Found ${sales.length} sales since ${format(since, "yyyy-MM-dd HH:mm:ss")}`,
   );
 
-  const chunks = chunkArray(sales, 1000);
+  // Fetch existing sales from the same time period in chronological order
+  const existingSales = await db
+    .selectFrom("Sale")
+    .select([
+      "source",
+      "buyerId",
+      "sellerId",
+      "itemId",
+      "quantity",
+      "unitPrice",
+      "date",
+    ])
+    .where("date", ">=", since)
+    .orderBy("date", "asc")
+    .execute();
+
+  // Walk through both sequences to find where existing sales end in the API results
+  // The API results and existing sales should align at the start
+  let apiIndex = 0;
+  for (const dbSale of existingSales) {
+    // Find this dbSale in the remaining API results
+    while (apiIndex < sales.length && !salesMatch(sales[apiIndex], dbSale)) {
+      apiIndex++;
+    }
+    if (apiIndex < sales.length) {
+      // Found a match, move past it
+      apiIndex++;
+    }
+  }
+
+  // Everything from apiIndex onwards is new
+  const newSales = sales.slice(apiIndex);
+
+  console.log(`${newSales.length} new sales to insert`);
+
+  const chunks = chunkArray(newSales, 1000);
 
   // Create the items first to avoid foreign key violations
   for (const chunk of chunks) {
@@ -126,11 +184,10 @@ async function ingestSales() {
           sellerId: s.seller,
         })),
       )
-      .onConflict((oc) => oc.doNothing())
       .execute();
   }
 
-  return [...new Set(sales.map((s) => s.item))];
+  return [...new Set(newSales.map((s) => s.item))];
 }
 
 async function getGreaterOfRecentOrMinSales(
