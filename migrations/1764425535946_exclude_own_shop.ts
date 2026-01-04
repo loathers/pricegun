@@ -8,5 +8,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .returning("itemId")
     .execute();
 
-  await recalculateValues([...new Set(items.map((i) => i.itemId))]);
+  if (items.length > 0) {
+    await recalculateValues([...new Set(items.map((i) => i.itemId))]);
+  }
 }

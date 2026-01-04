@@ -121,7 +121,10 @@ export function Chart({ item }: Props) {
                 day: "numeric",
               })
             }
-            formatter={(value, name) => [value && numberFormatter.format(value), name]}
+            formatter={(value, name) => [
+              value && numberFormatter.format(value),
+              name,
+            ]}
           />
           {series.map((s, i) => (
             <Bar

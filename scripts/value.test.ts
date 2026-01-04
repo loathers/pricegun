@@ -3,6 +3,7 @@ import { deriveValue } from "./value.js";
 import type { Sale } from "~/types.js";
 
 const baseSale = {
+  id: 0,
   sellerId: 1,
   source: "mall" as const,
   itemId: 1,
