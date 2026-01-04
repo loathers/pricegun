@@ -128,6 +128,42 @@ async function getExistingSales(since: Date) {
     .execute();
 }
 
+function findSalesToSkip(
+  sales: SaleResponse[],
+  existingSales: Awaited<ReturnType<typeof getExistingSales>>,
+): number {
+  if (sales.length === 0) return 0;
+
+  for (let i = 0; i < existingSales.length; i++) {
+    if (!salesMatch(sales[0], existingSales[i])) continue;
+
+    // Found candidate, count consecutive matches
+    let matchCount = 1;
+    let crossedBoundary = false;
+
+    while (matchCount < sales.length && i + matchCount < existingSales.length) {
+      if (!salesMatch(sales[matchCount], existingSales[i + matchCount])) {
+        break; // Stop at first mismatch
+      }
+
+      if (
+        sales[matchCount].date.getTime() !==
+        sales[matchCount - 1].date.getTime()
+      ) {
+        crossedBoundary = true;
+      }
+      matchCount++;
+    }
+
+    // Accept if we crossed a timestamp boundary OR matched to end of existingSales
+    if (crossedBoundary || i + matchCount >= existingSales.length) {
+      return matchCount;
+    }
+  }
+
+  return 0; // No confident match, don't skip any
+}
+
 async function ingestSales() {
   const since = await getLatestSaleDate();
 
@@ -140,22 +176,8 @@ async function ingestSales() {
   // Fetch existing sales from the same time period in chronological order
   const existingSales = await getExistingSales(since);
 
-  // Walk through both sequences to find where existing sales end in the API results
-  // The API results and existing sales should align at the start
-  let apiIndex = 0;
-  for (const dbSale of existingSales) {
-    // Find this dbSale in the remaining API results
-    while (apiIndex < sales.length && !salesMatch(sales[apiIndex], dbSale)) {
-      apiIndex++;
-    }
-    if (apiIndex < sales.length) {
-      // Found a match, move past it
-      apiIndex++;
-    }
-  }
-
-  // Everything from apiIndex onwards is new
-  const newSales = sales.slice(apiIndex);
+  const salesToSkip = findSalesToSkip(sales, existingSales);
+  const newSales = sales.slice(salesToSkip);
 
   console.log(`${newSales.length} new sales to insert`);
 
