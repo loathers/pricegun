@@ -100,7 +100,7 @@ function salesMatch(
   );
 }
 
-async function ingestSales() {
+async function getLatestSaleDate() {
   const latest = await db
     .selectFrom("Sale")
     .select("date")
@@ -108,16 +108,11 @@ async function ingestSales() {
     .limit(1)
     .executeTakeFirst();
 
-  const since = sub(latest?.date ?? new Date(0), { seconds: 1 });
+  return sub(latest?.date ?? new Date(0), { seconds: 1 });
+}
 
-  const sales = await query(null, since);
-
-  console.log(
-    `Found ${sales.length} sales since ${format(since, "yyyy-MM-dd HH:mm:ss")}`,
-  );
-
-  // Fetch existing sales from the same time period in chronological order
-  const existingSales = await db
+async function getExistingSales(since: Date) {
+  return await db
     .selectFrom("Sale")
     .select([
       "source",
@@ -131,6 +126,19 @@ async function ingestSales() {
     .where("date", ">=", since)
     .orderBy("date", "asc")
     .execute();
+}
+
+async function ingestSales() {
+  const since = await getLatestSaleDate();
+
+  const sales = await query(null, since);
+
+  console.log(
+    `Found ${sales.length} sales since ${format(since, "yyyy-MM-dd HH:mm:ss")}`,
+  );
+
+  // Fetch existing sales from the same time period in chronological order
+  const existingSales = await getExistingSales(since);
 
   // Walk through both sequences to find where existing sales end in the API results
   // The API results and existing sales should align at the start
