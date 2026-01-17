@@ -52,12 +52,16 @@ export function Chart({ item }: Props) {
       ? fetcher.data
       : [fetcher.data];
 
-    const series = itemData.map((item) => ({
-      id: item.itemId,
-      name: item.name ?? `Item ${item.itemId}`,
-      image: item.image,
-      volKey: `volume-${item.itemId}`,
-      priceKey: `price-${item.itemId}`,
+    // Don't use stale data from a previous item
+    if (!itemData.some((i) => i.itemId === item.itemId))
+      return { data: [], series: [], sales: [] };
+
+    const series = itemData.map((i) => ({
+      id: i.itemId,
+      name: i.name ?? `Item ${i.itemId}`,
+      image: i.image,
+      volKey: `volume-${i.itemId}`,
+      priceKey: `price-${i.itemId}`,
     }));
 
     const data = Object.values(
