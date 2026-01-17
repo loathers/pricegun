@@ -52,6 +52,10 @@ export function Chart({ item }: Props) {
       ? fetcher.data
       : [fetcher.data];
 
+    // Don't use stale data from a previous item
+    if (!itemData.some((i) => i.itemId === item.itemId))
+      return { data: [], series: [], sales: [] };
+
     const series = itemData.map((item) => ({
       id: item.itemId,
       name: item.name ?? `Item ${item.itemId}`,
