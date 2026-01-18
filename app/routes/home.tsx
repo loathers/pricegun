@@ -8,12 +8,10 @@ import {
   getVolumeLeaderboard,
 } from "~/db.server";
 import type { Route } from "./+types/home";
-import { Chart } from "~/components/Chart";
 import { numberFormatter } from "~/utils";
 import { Spend } from "~/components/Spend";
 import { Volume } from "~/components/Volume";
-import { useEffect, useState } from "react";
-import { ItemSelect, type Item } from "~/components/ItemSelect";
+import { ItemSelect } from "~/components/ItemSelect";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -38,11 +36,6 @@ export async function loader() {
 
 export default function Home() {
   const { volume, spend, total, items } = useLoaderData<typeof loader>();
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-
-  useEffect(() => {
-    setSelectedItem((s) => s ?? volume[0]);
-  }, [volume]);
 
   return (
     <div className={styles.homeContainer}>
@@ -56,13 +49,9 @@ export default function Home() {
           <Volume data={volume} />
         </section>
       </section>
-      <section className={styles.chart}>
-        <ItemSelect
-          items={items}
-          value={selectedItem}
-          onChange={setSelectedItem}
-        />
-        <Chart item={selectedItem} />
+      <section className={styles.selector}>
+        <label>Search for an item to view its price history:</label>
+        <ItemSelect items={items} />
       </section>
     </div>
   );

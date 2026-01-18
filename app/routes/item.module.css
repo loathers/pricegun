@@ -1,0 +1,30 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.header {
+  margin: 0;
+}
+
+.homeLink {
+  color: #666;
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+.homeLink:hover {
+  text-decoration: underline;
+}
+
+.selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+}
+
+.selector label {
+  font-size: 0.9em;
+  color: #666;
+}

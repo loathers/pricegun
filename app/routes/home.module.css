@@ -1,22 +1,18 @@
 .homeContainer {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 2em;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-.chart {
-  flex-basis: 100%;
+.selector {
   display: flex;
   flex-direction: column;
-  gap: 1em;
+  gap: 0.5em;
 }
 
-@media only screen and (max-width: 1000px) {
-  .homeContainer {
-    flex-direction: column;
-  }
-
-  .chart {
-    flex-basis: 400px;
-  }
+.selector label {
+  font-size: 0.9em;
+  color: #666;
 }
