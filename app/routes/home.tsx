@@ -26,10 +26,12 @@ export function meta({}: Route.MetaArgs) {
 export async function loader() {
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-  const volume = await getVolumeLeaderboard(since);
-  const spend = await getSpendLeaderboard(since);
-  const total = await getTotalSales();
-  const items = await getAllItems();
+  const [volume, spend, total, items] = await Promise.all([
+    getVolumeLeaderboard(since),
+    getSpendLeaderboard(since),
+    getTotalSales(),
+    getAllItems(),
+  ]);
 
   return { volume, spend, total, items };
 }
