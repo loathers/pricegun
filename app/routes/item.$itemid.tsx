@@ -1,10 +1,11 @@
-import { useLoaderData, Link } from "react-router";
+import { useLoaderData } from "react-router";
 import { redirect } from "react-router";
 
 import styles from "./item.module.css";
 import { getAllItems, getItemWithSales } from "~/db.server";
 import type { Route } from "./+types/item.$itemid";
 import { ItemSelect } from "~/components/ItemSelect";
+import { HomeLink } from "~/components/HomeLink";
 import { Chart } from "~/components/Chart";
 import { RecentSales } from "~/components/RecentSales";
 
@@ -42,9 +43,7 @@ export default function ItemPage() {
 
   return (
     <div className={styles.container}>
-      <Link to="/" className={styles.homeLink}>
-        ← Home
-      </Link>
+      <HomeLink />
       <h1 className={styles.header}>{item.name ?? `Item ${item.itemId}`}</h1>
       <div className={styles.selector}>
         <label>View a different item:</label>

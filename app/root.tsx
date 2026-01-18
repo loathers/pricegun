@@ -8,8 +8,11 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
+import globalStyles from "./global.css?url";
+import { HomeLink } from "./components/HomeLink";
 
 export const links: Route.LinksFunction = () => [
+  { rel: "stylesheet", href: globalStyles },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -61,14 +64,15 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
+    <main>
       <h1>{message}</h1>
       <p>{details}</p>
       {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
+        <pre>
           <code>{stack}</code>
         </pre>
       )}
+      <HomeLink useAnchor />
     </main>
   );
 }

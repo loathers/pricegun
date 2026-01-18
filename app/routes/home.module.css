@@ -1,18 +1,11 @@
 .homeContainer {
   display: flex;
   flex-direction: column;
-  gap: 2em;
-  max-width: 900px;
-  margin: 0 auto;
+  gap: var(--space-xl);
 }
 
 .selector {
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
-}
-
-.selector label {
-  font-size: 0.9em;
-  color: #666;
+  gap: var(--space-sm);
 }
