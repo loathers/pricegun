@@ -12,6 +12,7 @@ import globalStyles from "./global.css?url";
 import { HomeLink } from "./components/HomeLink";
 
 export const links: Route.LinksFunction = () => [
+  { rel: "icon", type: "image/png", href: "/pricetag.png" },
   { rel: "stylesheet", href: globalStyles },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
