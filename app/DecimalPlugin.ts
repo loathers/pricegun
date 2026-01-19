@@ -7,15 +7,7 @@ import type {
   RootOperationNode,
   UnknownRow,
 } from "kysely";
-
-function isPOJO(value: unknown) {
-  if (value === null || typeof value !== "object") {
-    return false;
-  }
-
-  const proto = Object.getPrototypeOf(value);
-  return proto === Object.prototype || proto === null;
-}
+import { walkObject } from "./utils";
 
 /**
  * Kysely plugin that converts Decimal.js instances to strings before
@@ -24,31 +16,12 @@ function isPOJO(value: unknown) {
  */
 export class DecimalPlugin implements KyselyPlugin {
   transformQuery(args: PluginTransformQueryArgs): RootOperationNode {
-    return this.transformNode(args.node);
-  }
-
-  private transformNode<T>(node: T): T {
-    if (node === null || node === undefined) {
-      return node;
-    }
-
-    if (node instanceof Decimal) {
-      return node.toString() as T;
-    }
-
-    if (Array.isArray(node)) {
-      return node.map((item) => this.transformNode(item)) as T;
-    }
-
-    if (typeof node === "object" && isPOJO(node)) {
-      const result: Record<string, unknown> = {};
-      for (const [key, value] of Object.entries(node)) {
-        result[key] = this.transformNode(value);
+    return walkObject(args.node, (value) => {
+      if (value instanceof Decimal) {
+        return { value: value.toString(), stop: true };
       }
-      return result as T;
-    }
-
-    return node;
+      return { value, stop: false };
+    });
   }
 
   async transformResult(

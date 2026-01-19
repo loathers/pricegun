@@ -1,5 +1,6 @@
 import { Decimal } from "decimal.js";
 import { useLoaderData } from "react-router";
+import { walkObject } from "~/utils";
 
 // Tagged serialization for Decimals across the client/server boundary
 const DECIMAL_TAG = "__decimal__" as const;
@@ -13,26 +14,6 @@ function isSerializedDecimal(value: unknown): value is SerializedDecimal {
     DECIMAL_TAG in value &&
     typeof (value as SerializedDecimal)[DECIMAL_TAG] === "string"
   );
-}
-
-function walkObject<T>(
-  data: T,
-  transform: (value: unknown) => { value: unknown; stop: boolean },
-): T {
-  const result = transform(data);
-  if (result.stop) return result.value as T;
-
-  if (Array.isArray(data)) {
-    return data.map((item) => walkObject(item, transform)) as T;
-  }
-  if (typeof data === "object" && data !== null) {
-    const obj: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(data)) {
-      obj[key] = walkObject(value, transform);
-    }
-    return obj as T;
-  }
-  return data;
 }
 
 export function serializeDecimals<T>(data: T): T {
