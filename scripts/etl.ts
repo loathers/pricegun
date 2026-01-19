@@ -1,3 +1,4 @@
+import type { Decimal } from "decimal.js";
 import { format, sub, subDays } from "date-fns";
 import { createClient } from "data-of-loathing";
 
@@ -85,7 +86,7 @@ function salesMatch(
     sellerId: number;
     itemId: number;
     quantity: number;
-    unitPrice: string | number;
+    unitPrice: Decimal;
     date: Date;
   },
 ) {
@@ -95,7 +96,7 @@ function salesMatch(
     apiSale.seller === dbSale.sellerId &&
     apiSale.item === dbSale.itemId &&
     apiSale.quantity === dbSale.quantity &&
-    apiSale.unitPrice === Number(dbSale.unitPrice) &&
+    apiSale.unitPrice.equals(dbSale.unitPrice) &&
     apiSale.date.getTime() === dbSale.date.getTime()
   );
 }

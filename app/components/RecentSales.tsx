@@ -1,10 +1,11 @@
-import { dateFormatter, numberFormatter } from "~/utils";
+import type { Decimal } from "decimal.js";
+import { dateFormatter, formatDecimal } from "~/utils";
 import styles from "./RecentSales.module.css";
 import type { Item } from "./ItemSelect";
 
 type Props = {
   item: Item | null;
-  sales: { date: Date; unitPrice: number; quantity: number }[];
+  sales: { date: Date; unitPrice: Decimal; quantity: number }[];
 };
 
 export function RecentSales({ item, sales }: Props) {
@@ -22,7 +23,7 @@ export function RecentSales({ item, sales }: Props) {
             <span className={styles.badge}>
               {dateFormatter.format(sale.date)}
             </span>
-            {sale.quantity} @ {numberFormatter.format(sale.unitPrice)}
+            {sale.quantity} @ {formatDecimal(sale.unitPrice)}
           </li>
         ))}
       </ol>

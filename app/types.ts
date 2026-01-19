@@ -1,9 +1,11 @@
 import type { ColumnType, Insertable, Selectable, Updateable } from "kysely";
+import type { Decimal } from "decimal.js";
 export type Generated<T> =
   T extends ColumnType<infer S, infer I, infer U>
     ? ColumnType<S, I | undefined, U>
     : ColumnType<T, T | undefined, T>;
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
+export type Numeric = ColumnType<Decimal, Decimal, Decimal>;
 
 export const SaleSource = {
   mall: "mall",
@@ -29,7 +31,7 @@ export type SaleTable = {
   sellerId: number;
   itemId: number;
   quantity: number;
-  unitPrice: number;
+  unitPrice: Numeric;
   date: Timestamp;
 };
 export type Sale = Selectable<SaleTable>;
