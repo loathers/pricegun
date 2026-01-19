@@ -5,8 +5,8 @@ import type { Sale } from "~/types";
 const VOLUME_EXPONENT = new Decimal(0.5);
 const HL = new Decimal(Math.LN2).dividedBy(259_200); // Three days
 
-export function deriveValue(sales: Sale[]) {
-  if (sales.length === 0) return 0;
+export function deriveValue(sales: Sale[]): Decimal {
+  if (sales.length === 0) return new Decimal(0);
 
   const epoch = new Date();
 
@@ -23,5 +23,5 @@ export function deriveValue(sales: Sale[]) {
     [new Decimal(0), new Decimal(0)],
   );
 
-  return numerator.dividedBy(denominator).toDecimalPlaces(2).toNumber();
+  return numerator.dividedBy(denominator).toDecimalPlaces(2);
 }

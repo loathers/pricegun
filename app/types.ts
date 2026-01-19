@@ -13,7 +13,7 @@ export const SaleSource = {
 } as const;
 export type SaleSource = (typeof SaleSource)[keyof typeof SaleSource];
 export type ItemTable = {
-  value: number;
+  value: Numeric;
   volume: number;
   date: Timestamp;
   itemId: number;

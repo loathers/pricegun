@@ -103,7 +103,6 @@ export async function getItemWithSales(itemId: number, numberOfSales = 20) {
   return {
     ...item,
     sales,
-    value: Number(item.value),
     history: await getSalesHistory(itemId),
   };
 }

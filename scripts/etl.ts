@@ -1,4 +1,4 @@
-import type { Decimal } from "decimal.js";
+import { Decimal } from "decimal.js";
 import { format, sub, subDays } from "date-fns";
 import { createClient } from "data-of-loathing";
 
@@ -191,7 +191,7 @@ async function ingestSales() {
       .values(
         chunk.map((s) => ({
           itemId: s.item,
-          value: 0,
+          value: new Decimal(0),
           volume: 0,
           date: new Date(0),
         })),

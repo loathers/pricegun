@@ -73,7 +73,7 @@ describe("deriveValue", () => {
     ];
     const actual = deriveValue(data);
 
-    expect(actual).toEqual(3781.95);
+    expect(actual).toEqual(new Decimal("3781.95"));
   });
 
   test("Recent price jump", () => {
@@ -130,7 +130,7 @@ describe("deriveValue", () => {
     ];
     const actual = deriveValue(data);
 
-    expect(actual).toEqual(8653.07);
+    expect(actual).toEqual(new Decimal("8653.07"));
   });
 
   test("Gradual price jump", () => {
@@ -187,7 +187,7 @@ describe("deriveValue", () => {
     ];
     const actual = deriveValue(data);
 
-    expect(actual).toEqual(568.08);
+    expect(actual).toEqual(new Decimal("568.08"));
   });
 
   test("Weird price jump outlier", () => {
@@ -244,7 +244,7 @@ describe("deriveValue", () => {
     ];
     const actual = deriveValue(data);
 
-    expect(actual).toEqual(7014.53);
+    expect(actual).toEqual(new Decimal("7014.53"));
   });
 
   test("Very low volume", () => {
@@ -266,7 +266,7 @@ describe("deriveValue", () => {
     ];
     const actual = deriveValue(data);
 
-    expect(actual).toEqual(43803.63);
+    expect(actual).toEqual(new Decimal("43803.63"));
   });
 
   test("High volume rational market", () => {
@@ -323,7 +323,7 @@ describe("deriveValue", () => {
     ];
     const actual = deriveValue(data);
 
-    expect(actual).toEqual(7471.51);
+    expect(actual).toEqual(new Decimal("7471.51"));
   });
 
   test("High volume irrational market", () => {
@@ -380,7 +380,7 @@ describe("deriveValue", () => {
     ];
     const actual = deriveValue(data);
 
-    expect(actual).toEqual(7490.53);
+    expect(actual).toEqual(new Decimal("7490.53"));
   });
 
   test("Very old prices", () => {
@@ -437,6 +437,6 @@ describe("deriveValue", () => {
     ];
     const actual = deriveValue(data);
 
-    expect(actual).toEqual(733.9);
+    expect(actual).toEqual(new Decimal("733.9"));
   });
 });
