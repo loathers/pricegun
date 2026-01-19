@@ -1,9 +1,12 @@
-import { useLoaderData } from "react-router";
 import { redirect } from "react-router";
 
 import styles from "./item.module.css";
 import { getAllItems, getItemWithSales } from "~/db.server";
 import type { Route } from "./+types/item.$itemid";
+import {
+  serializeDecimals,
+  useLoaderDataWithDecimals,
+} from "~/hooks/useLoaderDataWithDecimals";
 import { ItemSelect } from "~/components/ItemSelect";
 import { HomeLink } from "~/components/HomeLink";
 import { Chart } from "~/components/Chart";
@@ -35,11 +38,11 @@ export async function loader({ params }: Route.LoaderArgs) {
 
   const items = await getAllItems();
 
-  return { item, items };
+  return serializeDecimals({ item, items });
 }
 
 export default function ItemPage() {
-  const { item, items } = useLoaderData<typeof loader>();
+  const { item, items } = useLoaderDataWithDecimals<typeof loader>();
 
   return (
     <div className={styles.container}>
