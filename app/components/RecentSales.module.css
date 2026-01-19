@@ -1,5 +1,5 @@
 .list {
-  column-gap: 0;
+  column-gap: 2rem;
   column-count: 3;
 }
 
