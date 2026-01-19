@@ -2,7 +2,9 @@ import type { Database } from "./types.js";
 import { Decimal } from "decimal.js";
 import { Pool, types } from "pg";
 import { Kysely, PostgresDialect, sql } from "kysely";
+import { DecimalPlugin } from "./DecimalPlugin.js";
 
+// Convert NUMERIC values from PostgreSQL to Decimal.js instances when reading
 types.setTypeParser(types.builtins.NUMERIC, (value) => new Decimal(value));
 
 const dialect = new PostgresDialect({
@@ -13,6 +15,7 @@ const dialect = new PostgresDialect({
 
 export const db = new Kysely<Database>({
   dialect,
+  plugins: [new DecimalPlugin()],
 });
 
 export async function getVolumeLeaderboard(since: Date) {
