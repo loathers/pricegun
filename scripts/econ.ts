@@ -1,3 +1,4 @@
+import { Decimal } from "decimal.js";
 import { format, subDays } from "date-fns";
 
 const BASIC_TOKEN = Buffer.from(
@@ -10,7 +11,7 @@ export type SaleResponse = {
   seller: number;
   item: number;
   quantity: number;
-  unitPrice: number;
+  unitPrice: Decimal;
   date: Date;
 };
 
@@ -29,13 +30,14 @@ function getBounds(
 export function parseLine(line: string): SaleResponse {
   const parts = line.split(",");
   const quantity = Number(parts[4]);
+  const totalPrice = new Decimal(parts[5]);
   return {
     source: parts[0] === "m" ? "mall" : "flea",
     buyer: Number(parts[1]),
     seller: Number(parts[2]),
     item: Number(parts[3]),
     quantity,
-    unitPrice: Number(parts[5]) / quantity,
+    unitPrice: totalPrice.dividedBy(quantity),
     date: new Date(parts[6]),
   };
 }

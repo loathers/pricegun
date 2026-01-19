@@ -1,6 +1,11 @@
 import type { Database } from "./types.js";
-import { Pool } from "pg";
+import { Decimal } from "decimal.js";
+import { Pool, types } from "pg";
 import { Kysely, PostgresDialect, sql } from "kysely";
+import { DecimalPlugin } from "./DecimalPlugin.js";
+
+// Convert NUMERIC values from PostgreSQL to Decimal.js instances when reading
+types.setTypeParser(types.builtins.NUMERIC, (value) => new Decimal(value));
 
 const dialect = new PostgresDialect({
   pool: new Pool({
@@ -10,6 +15,7 @@ const dialect = new PostgresDialect({
 
 export const db = new Kysely<Database>({
   dialect,
+  plugins: [new DecimalPlugin()],
 });
 
 export async function getVolumeLeaderboard(since: Date) {
@@ -42,7 +48,7 @@ export async function getSpendLeaderboard(since: Date) {
       "Sale.itemId as itemId",
       "Item.name as name",
       sql<number>`SUM("Sale"."quantity")::integer`.as("quantity"),
-      sql<number>`SUM("Sale"."quantity" * "Sale"."unitPrice")`.as("spend"),
+      sql<Decimal>`SUM("Sale"."quantity" * "Sale"."unitPrice")`.as("spend"),
     ])
     .where("Sale.date", ">=", since)
     .groupBy(["Sale.itemId", "Item.name"])
@@ -54,31 +60,26 @@ export async function getSpendLeaderboard(since: Date) {
     ...r,
     name: r.name ?? `[${r.itemId}]`,
     quantity: r.quantity ?? 0,
-    spend: r.spend ?? 0,
+    spend: r.spend ?? new Decimal(0),
   }));
 }
 
 export async function getSalesHistory(itemId: number) {
   // This function used to take a list of item ids. I refactored it to take a single
   // item id to simplify its usage, but kept the SQL query the same for now.
-  const results = await db
+  return await db
     .selectFrom("Sale")
     .select([
       "itemId",
       sql<Date>`date_trunc('day', "date")::date`.as("date"),
       sql<number>`SUM("quantity")::integer`.as("volume"),
-      sql<number>`ROUND(AVG("unitPrice"), 2)`.as("price"),
+      sql<Decimal>`ROUND(AVG("unitPrice"), 2)`.as("price"),
     ])
     .where("itemId", "=", itemId)
     .where("Sale.date", ">=", sql<Date>`NOW() - INTERVAL '14 days'`)
     .groupBy(["itemId", sql<Date>`date_trunc('day', "date")::date`])
     .orderBy("date", "asc")
     .execute();
-
-  return results.map((r) => ({
-    ...r,
-    price: r.price, // already a JS number
-  }));
 }
 
 export async function getItemWithSales(itemId: number, numberOfSales = 20) {
@@ -104,8 +105,7 @@ export async function getItemWithSales(itemId: number, numberOfSales = 20) {
 
   return {
     ...item,
-    sales: sales.map((s) => ({ ...s, unitPrice: Number(s.unitPrice) })),
-    value: Number(item.value),
+    sales,
     history: await getSalesHistory(itemId),
   };
 }

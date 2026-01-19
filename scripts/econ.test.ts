@@ -1,3 +1,4 @@
+import { Decimal } from "decimal.js";
 import { expect, test } from "vitest";
 import { parseLine } from "./econ";
 
@@ -10,7 +11,7 @@ test("Parse simple mall line", () => {
     seller: 1345884,
     item: 641,
     quantity: 1,
-    unitPrice: 100,
+    unitPrice: new Decimal(100),
     source: "mall",
     date: new Date("2024-05-23 12:08:40"),
   });
@@ -25,7 +26,7 @@ test("Parse quantity mall line", () => {
     seller: 2270868,
     item: 641,
     quantity: 16,
-    unitPrice: 100,
+    unitPrice: new Decimal(100),
     source: "mall",
     date: new Date("2024-05-30 17:45:29"),
   });
@@ -40,7 +41,7 @@ test("Parse flea market line", () => {
     seller: 100105,
     item: 319,
     quantity: 1,
-    unitPrice: 720,
+    unitPrice: new Decimal(720),
     source: "flea",
     date: new Date("2024-05-19 03:56:36"),
   });

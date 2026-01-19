@@ -1,10 +1,11 @@
-import { numberFormatter } from "~/utils";
+import type { Decimal } from "decimal.js";
+import { formatDecimal, numberFormatter } from "~/utils";
 
 type Props = {
   data: {
     itemId: number;
     quantity: number;
-    spend: number;
+    spend: Decimal;
     name: string;
   }[];
 };
@@ -17,7 +18,7 @@ export function Spend({ data }: Props) {
         {data.map((item) => (
           <li key={item.itemId}>
             {item.name} x {numberFormatter.format(item.quantity)}:{" "}
-            {numberFormatter.format(item.spend)} meat
+            {formatDecimal(item.spend)} meat
           </li>
         ))}
       </ol>

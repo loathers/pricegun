@@ -14,6 +14,7 @@ import {
   shortDateFormatter,
   numberFormatter,
   shortNumberFormatter,
+  splitDecimal,
 } from "~/utils";
 
 const COLORS = [
@@ -27,11 +28,13 @@ const COLORS = [
   "#d83034",
 ];
 
+import type { Decimal } from "decimal.js";
+
 type ItemData = {
   itemId: number;
   name: string | null;
   image: string | null;
-  history: { itemId: number; date: Date; volume: number; price: number }[];
+  history: { itemId: number; date: Date; volume: number; price: Decimal }[];
 };
 
 type Props = {
@@ -59,7 +62,7 @@ export function Chart({ item }: Props) {
           (acc, h) => ({
             ...acc,
             [`volume-${h.itemId}`]: h.volume,
-            [`price-${h.itemId}`]: h.price,
+            [`price-${h.itemId}`]: splitDecimal(h.price)[0],
           }),
           { timestamp: day[0].date!.getTime(), date: day[0].date },
         );

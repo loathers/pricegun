@@ -1,5 +1,3 @@
-import { useLoaderData } from "react-router";
-
 import styles from "./home.module.css";
 import {
   getAllItems,
@@ -8,6 +6,10 @@ import {
   getVolumeLeaderboard,
 } from "~/db.server";
 import type { Route } from "./+types/home";
+import {
+  serializeDecimals,
+  useLoaderDataWithDecimals,
+} from "~/hooks/useLoaderDataWithDecimals";
 import { numberFormatter } from "~/utils";
 import { Spend } from "~/components/Spend";
 import { Volume } from "~/components/Volume";
@@ -33,11 +35,12 @@ export async function loader() {
     getAllItems(),
   ]);
 
-  return { volume, spend, total, items };
+  return serializeDecimals({ volume, spend, total, items });
 }
 
 export default function Home() {
-  const { volume, spend, total, items } = useLoaderData<typeof loader>();
+  const { volume, spend, total, items } =
+    useLoaderDataWithDecimals<typeof loader>();
 
   return (
     <div className={styles.homeContainer}>
