@@ -18,6 +18,11 @@
   /* Typography */
   --font-sans: "Inter", system-ui, sans-serif;
   --font-mono: ui-monospace, monospace;
+  --font-size-sm: 0.75rem;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-full: 9999px;
 }
 
 /* Base element styles */

@@ -1,6 +1,24 @@
 .list {
-  column-gap: 2rem;
+  column-gap: 0;
   column-count: 3;
+  list-style: none;
+  padding: 0;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.badge {
+  font-size: var(--font-size-sm);
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-muted);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
 }
 
 @media (max-width: 800px) {

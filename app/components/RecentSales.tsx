@@ -17,9 +17,12 @@ export function RecentSales({ item, sales }: Props) {
         {sales.map((sale) => (
           <li
             key={`${item.itemId}-${sale.date.toISOString()}-${sale.unitPrice}-${sale.quantity}`}
+            className={styles.item}
           >
-            {dateFormatter.format(sale.date)} - {sale.quantity} @{" "}
-            {numberFormatter.format(sale.unitPrice)}
+            <span className={styles.badge}>
+              {dateFormatter.format(sale.date)}
+            </span>
+            {sale.quantity} @ {numberFormatter.format(sale.unitPrice)}
           </li>
         ))}
       </ol>
