@@ -62,7 +62,8 @@ export function Chart({ item }: Props) {
           (acc, h) => ({
             ...acc,
             [`volume-${h.itemId}`]: h.volume,
-            [`price-${h.itemId}`]: splitDecimal(h.price)[0],
+            // Recharts cannot handle a bigint, but it can handle a string
+            [`price-${h.itemId}`]: splitDecimal(h.price)[0].toString(),
           }),
           { timestamp: day[0].date!.getTime(), date: day[0].date },
         );
