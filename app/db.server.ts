@@ -64,25 +64,33 @@ export async function getSpendLeaderboard(since: Date) {
   }));
 }
 
-export async function getSalesHistory(itemId: number) {
-  // This function used to take a list of item ids. I refactored it to take a single
-  // item id to simplify its usage, but kept the SQL query the same for now.
+export async function getSalesHistory(
+  itemId: number,
+  mode: "daily" | "weekly" = "daily",
+) {
+  const truncUnit = sql.raw(mode === "weekly" ? "'week'" : "'day'");
+  const interval = sql.raw(mode === "weekly" ? "'3 months'" : "'14 days'");
+
   return await db
     .selectFrom("Sale")
     .select([
       "itemId",
-      sql<Date>`date_trunc('day', "date")::date`.as("date"),
+      sql<Date>`date_trunc(${truncUnit}, "date")::date`.as("date"),
       sql<number>`SUM("quantity")::integer`.as("volume"),
       sql<Decimal>`ROUND(AVG("unitPrice"), 2)`.as("price"),
     ])
     .where("itemId", "=", itemId)
-    .where("Sale.date", ">=", sql<Date>`NOW() - INTERVAL '14 days'`)
-    .groupBy(["itemId", sql<Date>`date_trunc('day', "date")::date`])
+    .where("Sale.date", ">=", sql<Date>`NOW() - INTERVAL ${interval}`)
+    .groupBy(["itemId", sql<Date>`date_trunc(${truncUnit}, "date")::date`])
     .orderBy("date", "asc")
     .execute();
 }
 
-export async function getItemWithSales(itemId: number, numberOfSales = 20) {
+export async function getItemWithSales(
+  itemId: number,
+  numberOfSales = 20,
+  historyMode: "daily" | "weekly" = "daily",
+) {
   const item = await db
     .selectFrom("Item")
     .selectAll()
@@ -106,7 +114,7 @@ export async function getItemWithSales(itemId: number, numberOfSales = 20) {
   return {
     ...item,
     sales,
-    history: await getSalesHistory(itemId),
+    history: await getSalesHistory(itemId, historyMode),
   };
 }
 

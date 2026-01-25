@@ -13,3 +13,8 @@
   flex-direction: column;
   gap: var(--space-xs);
 }
+
+.chartHeader {
+  display: flex;
+  justify-content: flex-end;
+}

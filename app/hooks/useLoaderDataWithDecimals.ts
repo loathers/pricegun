@@ -25,7 +25,7 @@ export function serializeDecimals<T>(data: T): T {
   });
 }
 
-function hydrateDecimals<T>(data: T): T {
+export function hydrateDecimals<T>(data: T): T {
   return walkObject(data, (value) => {
     if (isSerializedDecimal(value)) {
       return { value: new Decimal(value[DECIMAL_TAG]), stop: true };

@@ -1,9 +1,11 @@
-import { redirect } from "react-router";
+import { redirect, useFetcher } from "react-router";
+import { useMemo, useState } from "react";
 
 import styles from "./item.module.css";
 import { getAllItems, getItemWithSales } from "~/db.server";
 import type { Route } from "./+types/item.$itemid";
 import {
+  hydrateDecimals,
   serializeDecimals,
   useLoaderDataWithDecimals,
 } from "~/hooks/useLoaderDataWithDecimals";
@@ -11,6 +13,7 @@ import { ItemSelect } from "~/components/ItemSelect";
 import { HomeLink } from "~/components/HomeLink";
 import { Chart } from "~/components/Chart";
 import { RecentSales } from "~/components/RecentSales";
+import { PeriodToggle, type Period } from "~/components/PeriodToggle";
 
 export function meta({ data }: Route.MetaArgs) {
   const itemName = data?.item?.name ?? "Item";
@@ -43,6 +46,21 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 export default function ItemPage() {
   const { item, items } = useLoaderDataWithDecimals<typeof loader>();
+  const [period, setPeriod] = useState<Period>("daily");
+  const fetcher = useFetcher();
+
+  const handlePeriodChange = (newPeriod: Period) => {
+    setPeriod(newPeriod);
+    fetcher.load(`/api/${item.itemId}?history=${newPeriod}`);
+  };
+
+  const chartItem = useMemo(() => {
+    if (fetcher.data && !("error" in fetcher.data)) {
+      const fetched = hydrateDecimals(fetcher.data) as typeof item;
+      return { ...item, history: fetched.history };
+    }
+    return item;
+  }, [item, fetcher.data]);
 
   return (
     <div className={styles.container}>
@@ -55,7 +73,10 @@ export default function ItemPage() {
           value={{ itemId: item.itemId, name: item.name }}
         />
       </div>
-      <Chart item={item} />
+      <div className={styles.chartHeader}>
+        <PeriodToggle value={period} onChange={handlePeriodChange} />
+      </div>
+      <Chart item={chartItem} />
       <RecentSales
         item={{ itemId: item.itemId, name: item.name }}
         sales={item.sales}
