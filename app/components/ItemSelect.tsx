@@ -60,7 +60,7 @@ export function ItemSelect({ items, value }: Props) {
         }
         value={value ?? null}
         inputValue={query}
-        onFocus={() => setQuery("")}
+        selectOnFocus
         onChange={handleSelect}
         onInputChange={(_, newInput) => {
           setQuery(newInput);
