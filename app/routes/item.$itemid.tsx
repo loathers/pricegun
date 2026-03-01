@@ -67,7 +67,6 @@ export default function ItemPage() {
       <HomeLink />
       <h1 className={styles.header}>{item.name ?? `Item ${item.itemId}`}</h1>
       <div className={styles.selector}>
-        <label>View a different item:</label>
         <ItemSelect
           items={items}
           value={{ itemId: item.itemId, name: item.name }}
