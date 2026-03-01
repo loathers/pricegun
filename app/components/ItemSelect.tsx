@@ -35,9 +35,7 @@ export function ItemSelect({ items, value }: Props) {
       return sortedItems
     }
 
-    let matchedItems = searcher.search(query)
-
-    return matchedItems.slice(0, 20)
+    return searcher.search(query).slice(0, 20)
   }, [query, sortedItems]);
 
   const handleSelect =  (_: any, newValue: Item | null) => {
