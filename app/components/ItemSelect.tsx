@@ -1,10 +1,10 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { useNavigate } from "react-router";
+import { type InputActionMeta } from "react-select";
+import Select from 'react-select';
+import { Searcher } from "fast-fuzzy";
 
 import styles from "./ItemSelect.module.css";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-import {Searcher} from "fast-fuzzy";
 
 export type Item = { itemId: number; name: string | null };
 
@@ -12,7 +12,6 @@ type Props = {
   items: Item[];
   value?: Item | null;
 };
-
 
 export function ItemSelect({ items, value }: Props) {
   const navigate = useNavigate();
@@ -27,50 +26,64 @@ export function ItemSelect({ items, value }: Props) {
     return new Searcher(items, {
       ignoreSymbols: true,
       keySelector: (item) => item.name ?? "",
-    })
-  }, [items])
+    });
+  }, [items]);
 
   const suggestedItems = useMemo(() => {
     if (query.length === 0) {
-      return sortedItems
+      return sortedItems;
     }
 
-    return searcher.search(query).slice(0, 20)
-  }, [query, sortedItems]);
+    return searcher.search(query).slice(0, 20);
+  }, [query, sortedItems, searcher]);
 
-  const handleSelect =  (_: any, newValue: Item | null) => {
-      if (newValue == null) {
-        return;
-      }
-      const itemId = Number(newValue.itemId);
-      if (!Number.isInteger(itemId)) return;
-      navigate(`/item/${itemId}`);
-    };
+  const selectRef = useRef<any>(null);
+
+  const handleChange = (selected: Item | null) => {
+    if (!selected) return;
+
+    const itemId = Number(selected.itemId);
+    if (!Number.isInteger(itemId)) return;
+
+    selectRef.current?.blur(); // lose focus so all text will be selected on next click
+
+    navigate(`/item/${selected.itemId}`);
+  };
 
   return (
     <div className={styles.container}>
-      <Autocomplete<Item, false, false, false>
-        sx={{ width: 400 }}
+      <Select<Item, false>
+        ref={selectRef}
         options={suggestedItems}
-        getOptionLabel={(option) => option.name ?? `[${option.itemId}]`}
-        isOptionEqualToValue={(option, value) =>
-          option.itemId === value.itemId
-        }
         value={value ?? null}
         inputValue={query}
-        selectOnFocus
-        onChange={handleSelect}
-        onInputChange={(_, newInput) => {
-          setQuery(newInput);
+        onChange={handleChange}
+        onInputChange={(newValue: string, meta: InputActionMeta) => {
+          if (meta.action === "input-change") {
+            setQuery(newValue);
+          }
         }}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Browse sales history for an item"
-            variant="outlined"
-            size="small"
-          />
-        )}
+        onFocus={() => {
+          requestAnimationFrame(() => {
+            selectRef.current?.inputRef?.select(); // select all text on focus
+          });
+        }}
+        getOptionLabel={(item: Item) => item.name ?? `[${item.itemId}]`}
+        getOptionValue={(item: Item) => String(item.itemId)}
+        placeholder="Browse sales history for an item"
+        isClearable
+        styles={{
+          container: (base: any) => ({
+            ...base,
+            width: 400,
+          }),
+          input: (provided: any) => ({
+            ...provided,
+            input: {
+              opacity: "1 !important", // prevent input text from disappearing after click
+            },
+          }),
+        }}
       />
     </div>
   );
