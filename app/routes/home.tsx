@@ -55,6 +55,7 @@ export default function Home() {
         </section>
       </section>
       <section className={styles.selector}>
+        <label>Search for an item to view its price history:</label>
         <ItemSelect items={items} />
       </section>
     </div>
