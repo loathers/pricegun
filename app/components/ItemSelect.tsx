@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef } from "react";
 import { useNavigate } from "react-router";
-import { type InputActionMeta } from "react-select";
+import type { InputActionMeta, SelectInstance, StylesConfig } from "react-select";
 import Select from 'react-select';
 import { Searcher } from "fast-fuzzy";
 
@@ -37,8 +37,7 @@ export function ItemSelect({ items, value }: Props) {
     return searcher.search(query).slice(0, 20);
   }, [query, sortedItems, searcher]);
 
-  const selectRef = useRef<any>(null);
-
+  const selectRef = useRef<SelectInstance<Item, false> | null>(null);
   const handleChange = (selected: Item | null) => {
     if (!selected) return;
 
@@ -48,6 +47,19 @@ export function ItemSelect({ items, value }: Props) {
     selectRef.current?.blur(); // lose focus so all text will be selected on next click
 
     navigate(`/item/${selected.itemId}`);
+  };
+
+  const customStyles: StylesConfig<Item, false> = {
+    container: (base) => ({
+      ...base,
+      width: 400,
+    }),
+    input: (base) => ({
+      ...base,
+      input: {
+        opacity: "1 !important",
+      },
+    }),
   };
 
   return (
@@ -72,18 +84,7 @@ export function ItemSelect({ items, value }: Props) {
         getOptionValue={(item: Item) => String(item.itemId)}
         placeholder="Browse sales history for an item"
         isClearable
-        styles={{
-          container: (base: any) => ({
-            ...base,
-            width: 400,
-          }),
-          input: (provided: any) => ({
-            ...provided,
-            input: {
-              opacity: "1 !important", // prevent input text from disappearing after click
-            },
-          }),
-        }}
+        styles={customStyles}
       />
     </div>
   );
