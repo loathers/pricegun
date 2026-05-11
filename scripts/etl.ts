@@ -1,6 +1,6 @@
 import { Decimal } from "decimal.js";
 import { format, sub, subDays } from "date-fns";
-import { createClient } from "data-of-loathing";
+import { createClient, Item } from "data-of-loathing";
 
 import { db } from "../app/db.server";
 import { query, type SaleResponse } from "./econ";
@@ -43,29 +43,13 @@ async function fetchItemData() {
     .where("name", "is", null)
     .execute();
 
-  const data = (
-    unknown.length > 20
-      ? ((
-          await dol.query({
-            allItems: { nodes: { id: true, name: true, image: true } },
-          })
-        ).allItems?.nodes ?? [])
-      : await Promise.all(
-          unknown.map(
-            async (item) =>
-              (
-                await dol.query({
-                  itemById: {
-                    id: true,
-                    name: true,
-                    image: true,
-                    __args: { id: item.itemId },
-                  },
-                })
-              ).itemById,
-          ),
-        )
-  ).filter((i) => i !== null);
+  if (unknown.length === 0) return;
+
+  await dol.load();
+
+  const data = await dol.query.find(Item, {
+    id: { $in: unknown.map((i) => i.itemId) },
+  });
 
   await db.transaction().execute(async (tx) => {
     for (const d of data) {
