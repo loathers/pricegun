@@ -18,7 +18,7 @@
     "@react-router/node": "^7.12.0",
     "@react-router/serve": "^7.12.0",
     "clsx": "^2.1.1",
-    "data-of-loathing": "^2.6.2",
+    "data-of-loathing": "^3.2.2",
     "date-fns": "^4.1.0",
     "decimal.js": "^10.6.0",
     "dotenv": "^17.2.3",
