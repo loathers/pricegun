@@ -43,6 +43,8 @@ async function fetchItemData() {
     .where("name", "is", null)
     .execute();
 
+  if (unknown.length === 0) return;
+
   await dol.load();
 
   const data = await dol.query.find(Item, {
