@@ -1,6 +1,6 @@
 import styles from "./PeriodToggle.module.css";
 
-export type Period = "daily" | "weekly";
+export type Period = "daily" | "weekly" | "monthly" | "all";
 
 type Props = {
   value: Period;
@@ -10,6 +10,8 @@ type Props = {
 const periods: { value: Period; label: string; title: string }[] = [
   { value: "daily", label: "D", title: "Daily for the past two weeks" },
   { value: "weekly", label: "W", title: "Weekly for the past three months" },
+  { value: "monthly", label: "M", title: "Monthly for the past year" },
+  { value: "all", label: "A", title: "Weekly for all time" },
 ];
 
 export function PeriodToggle({ value, onChange }: Props) {

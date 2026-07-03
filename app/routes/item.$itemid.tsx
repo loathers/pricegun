@@ -76,7 +76,7 @@ export default function ItemPage() {
       <div className={styles.chartHeader}>
         <PeriodToggle value={period} onChange={handlePeriodChange} />
       </div>
-      <Chart item={chartItem} />
+      <Chart item={chartItem} period={period} />
       <RecentSales
         item={{ itemId: item.itemId, name: item.name }}
         sales={item.sales}
