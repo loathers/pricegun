@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { numberFormatter } from "~/utils";
 
 type Props = {
@@ -15,7 +16,8 @@ export function Volume({ data }: Props) {
       <ol>
         {data.map((item) => (
           <li key={item.itemId}>
-            {item.name}: {numberFormatter.format(item.quantity)}
+            <Link to={`/item/${item.itemId}`}>{item.name}</Link>:{" "}
+            {numberFormatter.format(item.quantity)}
           </li>
         ))}
       </ol>

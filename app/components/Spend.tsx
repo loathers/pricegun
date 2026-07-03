@@ -1,4 +1,5 @@
 import type { Decimal } from "decimal.js";
+import { Link } from "react-router";
 import { formatDecimal, numberFormatter } from "~/utils";
 
 type Props = {
@@ -17,7 +18,8 @@ export function Spend({ data }: Props) {
       <ol>
         {data.map((item) => (
           <li key={item.itemId}>
-            {item.name} x {numberFormatter.format(item.quantity)}:{" "}
+            <Link to={`/item/${item.itemId}`}>{item.name}</Link> x{" "}
+            {numberFormatter.format(item.quantity)}:{" "}
             {formatDecimal(item.spend)} meat
           </li>
         ))}
