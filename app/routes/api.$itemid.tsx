@@ -6,9 +6,7 @@ import { periodSchema } from "~/components/PeriodToggle";
 
 export async function loader({ params, request }: Route.LoaderArgs) {
   const url = new URL(request.url);
-  const historyMode = periodSchema
-    .catch("daily")
-    .parse(url.searchParams.get("history"));
+  const historyMode = periodSchema.parse(url.searchParams.get("history"));
 
   const itemIds = params["itemid"]!.split(",")
     .map(Number)
