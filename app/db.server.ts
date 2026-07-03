@@ -3,6 +3,7 @@ import { Decimal } from "decimal.js";
 import { Pool, types } from "pg";
 import { Kysely, PostgresDialect, sql } from "kysely";
 import { DecimalPlugin } from "./DecimalPlugin.js";
+import type { Period } from "./components/PeriodToggle.js";
 
 // Convert NUMERIC values from PostgreSQL to Decimal.js instances when reading
 types.setTypeParser(types.builtins.NUMERIC, (value) => new Decimal(value));
@@ -64,12 +65,16 @@ export async function getSpendLeaderboard(since: Date) {
   }));
 }
 
-export async function getSalesHistory(
-  itemId: number,
-  mode: "daily" | "weekly" = "daily",
-) {
-  const truncUnit = sql.raw(mode === "weekly" ? "'week'" : "'day'");
-  const interval = sql.raw(mode === "weekly" ? "'3 months'" : "'14 days'");
+const historyModes = {
+  daily: { trunc: "'day'", interval: "'14 days'" },
+  weekly: { trunc: "'week'", interval: "'3 months'" },
+  monthly: { trunc: "'month'", interval: "'1 year'" },
+  all: { trunc: "'week'", interval: null },
+} as const;
+
+export async function getSalesHistory(itemId: number, mode: Period = "daily") {
+  const { trunc, interval } = historyModes[mode];
+  const truncUnit = sql.raw(trunc);
 
   return await db
     .selectFrom("Sale")
@@ -80,7 +85,13 @@ export async function getSalesHistory(
       sql<Decimal>`ROUND(AVG("unitPrice"), 2)`.as("price"),
     ])
     .where("itemId", "=", itemId)
-    .where("Sale.date", ">=", sql<Date>`NOW() - INTERVAL ${interval}`)
+    .$if(interval !== null, (qb) =>
+      qb.where(
+        "Sale.date",
+        ">=",
+        sql<Date>`NOW() - INTERVAL ${sql.raw(interval!)}`,
+      ),
+    )
     .groupBy(["itemId", sql<Date>`date_trunc(${truncUnit}, "date")::date`])
     .orderBy("date", "asc")
     .execute();
@@ -89,7 +100,7 @@ export async function getSalesHistory(
 export async function getItemWithSales(
   itemId: number,
   numberOfSales = 20,
-  historyMode: "daily" | "weekly" = "daily",
+  historyMode: Period = "daily",
 ) {
   const item = await db
     .selectFrom("Item")

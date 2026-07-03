@@ -2,11 +2,11 @@ import { data } from "react-router";
 import type { Route } from "./+types/api.$itemid.js";
 import { getItemWithSales } from "~/db.server.js";
 import { serializeDecimals } from "~/hooks/useLoaderDataWithDecimals";
+import { periodSchema } from "~/components/PeriodToggle";
 
 export async function loader({ params, request }: Route.LoaderArgs) {
   const url = new URL(request.url);
-  const historyMode =
-    url.searchParams.get("history") === "weekly" ? "weekly" : "daily";
+  const historyMode = periodSchema.parse(url.searchParams.get("history"));
 
   const itemIds = params["itemid"]!.split(",")
     .map(Number)
