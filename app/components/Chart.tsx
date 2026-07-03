@@ -12,10 +12,13 @@ import {
 import { useMemo } from "react";
 import {
   shortDateFormatter,
+  monthYearFormatter,
+  shortDateYearFormatter,
   numberFormatter,
   shortNumberFormatter,
   splitDecimal,
 } from "~/utils";
+import type { Period } from "~/components/PeriodToggle";
 
 const COLORS = [
   "#003a7d",
@@ -39,9 +42,24 @@ type ItemData = {
 
 type Props = {
   item: ItemData;
+  period?: Period;
 };
 
-export function Chart({ item }: Props) {
+const tickFormatters: Record<Period, Intl.DateTimeFormat> = {
+  daily: shortDateFormatter,
+  weekly: shortDateFormatter,
+  monthly: monthYearFormatter,
+  all: shortDateYearFormatter,
+};
+
+const tooltipDateOptions: Record<Period, Intl.DateTimeFormatOptions> = {
+  daily: { weekday: "short", month: "short", day: "numeric" },
+  weekly: { weekday: "short", month: "short", day: "numeric" },
+  monthly: { month: "short", year: "numeric" },
+  all: { month: "short", day: "numeric", year: "numeric" },
+};
+
+export function Chart({ item, period = "daily" }: Props) {
   const { data, series } = useMemo(() => {
     const series = [
       {
@@ -85,7 +103,7 @@ export function Chart({ item }: Props) {
             (dataMax: number) => dataMax + 24 * 60 * 60 * 1000,
           ]}
           tickFormatter={(iso: string) =>
-            shortDateFormatter.format(new Date(iso))
+            tickFormatters[period].format(new Date(iso))
           }
         />
         <YAxis
@@ -102,12 +120,11 @@ export function Chart({ item }: Props) {
           label={{ value: `Price`, angle: 90, position: "insideRight" }}
         />
         <Tooltip<number, `${string} Price` | `${string} Volume`>
-          labelFormatter={(iso: string) =>
-            new Date(iso).toLocaleDateString(undefined, {
-              weekday: "short",
-              month: "short",
-              day: "numeric",
-            })
+          labelFormatter={(timestamp) =>
+            new Date(timestamp as number).toLocaleDateString(
+              undefined,
+              tooltipDateOptions[period],
+            )
           }
           formatter={(value, name) => [
             value && numberFormatter.format(value),
