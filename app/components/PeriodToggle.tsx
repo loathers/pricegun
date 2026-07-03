@@ -1,6 +1,9 @@
+import { z } from "zod";
+
 import styles from "./PeriodToggle.module.css";
 
-export type Period = "daily" | "weekly" | "monthly" | "all";
+export const periodSchema = z.enum(["daily", "weekly", "monthly", "all"]);
+export type Period = z.infer<typeof periodSchema>;
 
 type Props = {
   value: Period;
