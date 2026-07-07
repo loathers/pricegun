@@ -5,7 +5,7 @@ import type { Item } from "./ItemSelect";
 
 type Props = {
   item: Item | null;
-  sales: { date: Date; unitPrice: Decimal; quantity: number }[];
+  sales: { id: number; date: Date; unitPrice: Decimal; quantity: number }[];
 };
 
 export function RecentSales({ item, sales }: Props) {
@@ -17,7 +17,7 @@ export function RecentSales({ item, sales }: Props) {
       <ol className={styles.list}>
         {sales.map((sale) => (
           <li
-            key={`${item.itemId}-${sale.date.toISOString()}-${sale.unitPrice}-${sale.quantity}`}
+            key={sale.id}
             className={styles.item}
           >
             <span className={styles.badge}>
