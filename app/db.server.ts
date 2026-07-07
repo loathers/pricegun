@@ -113,6 +113,7 @@ export async function getItemWithSales(
   const sales = await db
     .selectFrom("Sale")
     .select([
+      "Sale.id as id",
       "Sale.date as date",
       "Sale.unitPrice as unitPrice",
       "Sale.quantity as quantity",
