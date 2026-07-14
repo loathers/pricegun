@@ -82,7 +82,7 @@ export async function getSalesHistory(itemId: number, mode: Period = "daily") {
       "itemId",
       sql<Date>`date_trunc(${truncUnit}, "date")::date`.as("date"),
       sql<number>`SUM("quantity")::integer`.as("volume"),
-      sql<Decimal>`ROUND(SUM("unitprice"*"quantity")/SUM("quantity"), 2)`.as("price"),
+      sql<Decimal>`ROUND(SUM("unitPrice"*"quantity")/SUM("quantity"), 2)`.as("price"),
     ])
     .where("itemId", "=", itemId)
     .$if(interval !== null, (qb) =>
