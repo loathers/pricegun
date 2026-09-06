@@ -17,6 +17,7 @@ import {
   numberFormatter,
   shortNumberFormatter,
   splitDecimal,
+  itemImageUrl,
 } from "~/utils";
 import type { Period } from "~/components/PeriodToggle";
 
@@ -36,7 +37,7 @@ import type { Decimal } from "decimal.js";
 type ItemData = {
   itemId: number;
   name: string | null;
-  image: string | null;
+  image: string;
   history: { itemId: number; date: Date; volume: number; price: Decimal }[];
 };
 
@@ -153,7 +154,7 @@ export function Chart({ item, period = "daily" }: Props) {
             dot={({ index, cx, cy }) => (
               <image
                 key={index}
-                href={`https://images.kingdomofloathing.com/itemimages/${s.image}`}
+                href={itemImageUrl(s.image)}
                 x={(cx ?? 0) - 5}
                 y={(cy ?? 0) - 5}
                 width={10}
@@ -163,7 +164,7 @@ export function Chart({ item, period = "daily" }: Props) {
             activeDot={({ index, cx, cy }) => (
               <image
                 key={index}
-                href={`https://images.kingdomofloathing.com/itemimages/${s.image}`}
+                href={itemImageUrl(s.image)}
                 x={(cx ?? 0) - 8}
                 y={(cy ?? 0) - 8}
                 width={16}

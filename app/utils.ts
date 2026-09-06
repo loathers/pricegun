@@ -67,3 +67,9 @@ export const dateFormatter = new Intl.DateTimeFormat(undefined, {
   dateStyle: "short",
   timeStyle: "short",
 });
+
+const ITEM_IMAGE_BASE_URL = "https://images.kingdomofloathing.com/itemimages";
+
+export function itemImageUrl(image: string) {
+  return `${ITEM_IMAGE_BASE_URL}/${image}`;
+}
