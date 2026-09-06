@@ -153,7 +153,7 @@ export function Chart({ item, period = "daily" }: Props) {
             dot={({ index, cx, cy }) => (
               <image
                 key={index}
-                href={`https://s3.amazonaws.com/images.kingdomofloathing.com/itemimages/${s.image}`}
+                href={`https://images.kingdomofloathing.com/itemimages/${s.image}`}
                 x={(cx ?? 0) - 5}
                 y={(cy ?? 0) - 5}
                 width={10}
@@ -163,7 +163,7 @@ export function Chart({ item, period = "daily" }: Props) {
             activeDot={({ index, cx, cy }) => (
               <image
                 key={index}
-                href={`https://s3.amazonaws.com/images.kingdomofloathing.com/itemimages/${s.image}`}
+                href={`https://images.kingdomofloathing.com/itemimages/${s.image}`}
                 x={(cx ?? 0) - 8}
                 y={(cy ?? 0) - 8}
                 width={16}
